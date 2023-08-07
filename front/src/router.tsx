@@ -6,7 +6,7 @@ function RouterLink() {
     return (
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/oauth" element={<OauthPage />} />
+        <Route path="/oauth/*" element={<OauthPage />} />
       </Routes>
     );
 }
