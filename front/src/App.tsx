@@ -1,5 +1,7 @@
 import { BrowserRouter as Router } from "react-router-dom";
 import RouterLink from "./router";
+import OAuthEventListener from "./comp/OAuthEventListener";
+
 
 function App() {
   return (
@@ -7,6 +9,7 @@ function App() {
       <Router>
         <RouterLink />
       </Router>
+      <OAuthEventListener />
     </div>
   );
 }

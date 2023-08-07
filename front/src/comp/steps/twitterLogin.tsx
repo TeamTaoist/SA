@@ -1,8 +1,11 @@
 import styled from "@emotion/styled";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import { oauthTwitter } from "../../api/oauth";
+import useSubcribe from "../useSubscribe";
 
-import { TWITTER_APP_CLIENT_ID, TWITTER_REDIRECT_URL } from "../constants";
+
+import { TWITTER_APP_CLIENT_ID, TWITTER_REDIRECT_URL, LOCAL_OAUTH_KEY } from "../../constants";
 
 
 const POPUP_HEIGHT = 700;
@@ -27,6 +30,25 @@ export default function TwitterLoginStep({ handleNext }: IProps) {
     const left = window.outerWidth / 2 + window.screenX - POPUP_WIDTH / 2;
     window.open(url, "OAuth2", `height=${POPUP_HEIGHT},width=${POPUP_WIDTH},top=${top},left=${left}`);
   };
+
+  const handleOauth = async (code: string, msgType: string, writeLocal?: boolean) => {
+    try {
+      let resp;
+      if (msgType === LOCAL_OAUTH_KEY.Twitter) {
+        resp = await oauthTwitter(code, TWITTER_REDIRECT_URL);
+      }
+      return resp?.data;
+    } catch (genericError) {
+      console.error(genericError);
+    }
+  };
+
+  useSubcribe("SA_OAUTH_EVENT_TWITTER", async (_: any, { code, msgFrom, msgType }: { code: string; msgFrom: string; msgType: string }) => {
+    if (msgFrom !== "twitterSpace") {
+      return;
+    }
+    await handleOauth(code, msgType, true);
+  });
 
   return (
     <TwitterStepStyle>

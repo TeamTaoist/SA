@@ -33,7 +33,7 @@ app.get("/api/twitter/get_id/:userName", function (req, res) {
 })
 
 
-app.post("/auth_callback/twitter", function (req, res) {
+app.post("/auth/twitter", function (req, res) {
     var params = req.params;
     console.debug("=====", params)
 
