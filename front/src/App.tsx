@@ -1,9 +1,12 @@
-import Steps from "./steps";
+import { BrowserRouter as Router } from "react-router-dom";
+import RouterLink from "./router";
 
 function App() {
   return (
     <div className="App">
-      <Steps />
+      <Router>
+        <RouterLink />
+      </Router>
     </div>
   );
 }
