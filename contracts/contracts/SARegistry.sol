@@ -99,22 +99,19 @@ contract SARegistry is OwnableUpgradeable, ReentrancyGuardUpgradeable {
 
     function verifySignature(
         address signer,
-        bytes32 message,
+        bytes32 hashValue,
         bytes memory signature
-    ) public pure returns (bool) {
-        return SignatureCheckerUpgradeable.isValidSignatureNow(
+    ) public view returns (bool) {
+        return
+            SignatureCheckerUpgradeable.isValidSignatureNow(
                 signer,
                 keccak256(
                     abi.encodePacked(
                         "\x19Ethereum Signed Message:\n32",
-                        keccak256(
-                            abi.encodePacked(
-                                message
-                            )
-                        )
+                        keccak256(abi.encodePacked(hashValue))
                     )
                 ),
                 signature
-            )
+            );
     }
 }
