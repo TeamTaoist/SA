@@ -1,4 +1,4 @@
-import "dotenv";
+import "dotenv/config";
 import express from "express";
 import axios from "axios";
 import cors from "cors";
@@ -53,6 +53,10 @@ app.post("/oauth/twitter", function (req, res) {
         "redirect_uri": req.body.redirect_uri,
     }
 
+    console.debug("=====formdata", formdata);
+
+    console.debug("=====data", axios.toFormData(formdata));
+
     axios({
         method: "post",
         url: `https://api.twitter.com/2/oauth2/token`,
@@ -60,10 +64,26 @@ app.post("/oauth/twitter", function (req, res) {
             "Content-Type": "application/x-www-form-urlencoded",
             "Accept": "application/json",
         },
-        data: axios.toFormData(formdata)
+        data: formdata
     }).then((dataResult) => {
-        res.send(dataResult.data);
+        console.log(dataResult.data);
+        // res.send(dataResult.data);
+
+        axios({
+            method: "get",
+            url: "https://api.twitter.com/2/users/me",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Accept": "application/json",
+                "Authorization": "Bearer " + dataResult.data.access_token
+            }
+        }).then((dataResult) => {
+            console.log(dataResult.data);
+            res.send(dataResult.data);
+        })
     }).catch((error) => {
+        // console.debug(error);
+        // console.debug(error.message);
         res.status(500).send(error);
     });
 });
