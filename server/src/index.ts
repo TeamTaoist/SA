@@ -2,11 +2,15 @@ import "dotenv/config";
 import express from "express";
 import axios from "axios";
 import cors from "cors";
+import { ethers } from 'ethers';
+import { time } from "console";
+import { sign } from "crypto";
 
 /// twitter Config
 const BearerToken = process.env.TWITTER_BEARER_TOKEN;
 const ClientID = process.env.TWITTER_APP_CLIENT_ID;
 const ClientSecret = process.env.TWITTER_APP_CLIENT_SECRET;
+const ETH_PRIV_KEY = process.env.SA_ETHEREUM_PRI_KEY || '';
 
 const port = 8888;
 const app = express();
@@ -14,6 +18,27 @@ const app = express();
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+
+function signMessage(msg: Object): string {
+    const signingKey = new ethers.SigningKey(ETH_PRIV_KEY);
+    const address = ethers.computeAddress(signingKey.publicKey);
+    const timestamp = Math.floor(new Date().getTime() / 1000);
+
+    console.log(msg);
+
+    const data = {
+        signer: address,
+        ts: timestamp,
+        ...msg
+    }
+    console.log('data', data);
+
+    const signature = signingKey.sign(ethers.keccak256(ethers.toUtf8Bytes(JSON.stringify(data))));
+    console.log('signature', signature.serialized);
+
+    return Object.assign({ sig: signature.serialized, ...data});
+}
 
 app.get("/api/twitter/get_id/:userName", function (req, res) {
     var params = req.params;
@@ -40,7 +65,6 @@ app.post("/oauth/twitter", function (req, res) {
 
     var body = req.body;
     console.debug("======body", body);
-
 
     // todo: add ethereum wallet signature from client
 
@@ -79,7 +103,12 @@ app.post("/oauth/twitter", function (req, res) {
             }
         }).then((dataResult) => {
             console.log(dataResult.data);
-            res.send(dataResult.data);
+
+            var result = JSON.stringify(signMessage(dataResult.data));
+
+            console.log(result);
+
+            res.send(result);
         })
     }).catch((error) => {
         // console.debug(error);

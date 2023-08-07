@@ -7,15 +7,28 @@ require("dotenv/config");
 const express_1 = __importDefault(require("express"));
 const axios_1 = __importDefault(require("axios"));
 const cors_1 = __importDefault(require("cors"));
+const ethers_1 = require("ethers");
 /// twitter Config
 const BearerToken = process.env.TWITTER_BEARER_TOKEN;
 const ClientID = process.env.TWITTER_APP_CLIENT_ID;
 const ClientSecret = process.env.TWITTER_APP_CLIENT_SECRET;
+const ETH_PRIV_KEY = process.env.SA_ETHEREUM_PRI_KEY || '';
 const port = 8888;
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use(express_1.default.json());
+function signMessage(msg) {
+    const signingKey = new ethers_1.ethers.SigningKey(ETH_PRIV_KEY);
+    const address = ethers_1.ethers.computeAddress(signingKey.publicKey);
+    const timestamp = Math.floor(new Date().getTime() / 1000);
+    console.log(msg);
+    const data = Object.assign({ signer: address, ts: timestamp }, msg);
+    console.log('data', data);
+    const signature = signingKey.sign(ethers_1.ethers.keccak256(ethers_1.ethers.toUtf8Bytes(JSON.stringify(data))));
+    console.log('signature', signature.serialized);
+    return Object.assign(Object.assign({ sig: signature.serialized }, data));
+}
 app.get("/api/twitter/get_id/:userName", function (req, res) {
     var params = req.params;
     console.debug("=====", params.userName);
@@ -69,7 +82,9 @@ app.post("/oauth/twitter", function (req, res) {
             }
         }).then((dataResult) => {
             console.log(dataResult.data);
-            res.send(dataResult.data);
+            var result = JSON.stringify(signMessage(dataResult.data));
+            console.log(result);
+            res.send(result);
         });
     }).catch((error) => {
         // console.debug(error);
