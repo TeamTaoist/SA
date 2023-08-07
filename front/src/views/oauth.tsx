@@ -9,27 +9,28 @@ interface IProps {
 
 const Twitter = memo(({ code, msgFrom }: IProps) => {
   useEffect(() => {
-    // code && localStorage.setItem(LOCAL_OAUTH_KEY.Twitter, code);
+    const bc = new BroadcastChannel("SA_OAUTH");
+    bc.postMessage({ code, msgFrom, msgType: LOCAL_OAUTH_KEY.Twitter });
     window.close();
   }, [code]);
   return <>oauth success</>;
 });
 
-const Discord = memo(({ code, msgFrom }: IProps) => {
-  useEffect(() => {
-    const bc = new BroadcastChannel("SA_OAUTH");
-    bc.postMessage({ code, msgFrom, msgType: LOCAL_OAUTH_KEY.Discord });
-    window.close();
-  }, [code]);
-  return <>oauth success</>;
-});
+// const Discord = memo(({ code, msgFrom }: IProps) => {
+//   useEffect(() => {
+//     const bc = new BroadcastChannel("SA_OAUTH");
+//     bc.postMessage({ code, msgFrom, msgType: LOCAL_OAUTH_KEY.Discord });
+//     window.close();
+//   }, [code]);
+//   return <>oauth success</>;
+// });
 
 const Oauth = memo(() => {
   const [params] = useSearchParams();
   return (
     <Routes>
       <Route path="twitter" element={<Twitter code={params.get("code")} msgFrom={params.get("state")?.split("_")[1]} />} />
-      <Route path="discord" element={<Discord code={params.get("code")} msgFrom={params.get("state")?.split("_")[1]} />} />
+      {/* <Route path="discord" element={<Discord code={params.get("code")} msgFrom={params.get("state")?.split("_")[1]} />} /> */}
     </Routes>
   );
 });

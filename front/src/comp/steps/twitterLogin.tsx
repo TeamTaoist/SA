@@ -44,9 +44,7 @@ export default function TwitterLoginStep({ handleNext }: IProps) {
   };
 
   useSubcribe("SA_OAUTH_EVENT_TWITTER", async (_: any, { code, msgFrom, msgType }: { code: string; msgFrom: string; msgType: string }) => {
-    if (msgFrom !== "twitterSpace") {
-      return;
-    }
+    console.log(`from ${msgFrom}`);
     await handleOauth(code, msgType, true);
   });
 

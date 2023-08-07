@@ -6,6 +6,9 @@ export default function OAuthEventListener() {
     const handleMessage = (e: { data: any }) => {
         const data = e.data || {};
         const msgType = data.msgType;
+
+        console.log(`data`, data);
+        
         if (msgType === LOCAL_OAUTH_KEY.Twitter) {
             PubSub.publish("SA_OAUTH_EVENT_TWITTER", e.data);
         } else if (msgType === LOCAL_OAUTH_KEY.Discord) {
