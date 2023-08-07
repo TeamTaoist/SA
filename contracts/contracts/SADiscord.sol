@@ -10,7 +10,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 
 import "./ISA.sol";
 
-contract SATwitter is ISocialAttestationInterface, ERC721, AccessControl {
+contract SADiscord is ISocialAttestationInterface, ERC721, AccessControl {
     using Counters for Counters.Counter;
 
     bytes32 public constant ATTESTER_ROLE = keccak256("ATTESTER_ROLE");
@@ -35,11 +35,11 @@ contract SATwitter is ISocialAttestationInterface, ERC721, AccessControl {
     // fixme: need handle re-issue token case!
     function _issueSA(
         address to,
-        uint256 twitterUserId,
-        string memory twitterHandle
+        uint256 discordUserId,
+        string memory discordUserName
     ) public onlyRole(ATTESTER_ROLE) returns (uint256) {
-        super._safeMint(to, twitterUserId);
-        return twitterUserId;
+        super._safeMint(to, discordUserId);
+        return discordUserId;
     }
 
     function supportsInterface(
