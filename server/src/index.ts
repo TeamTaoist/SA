@@ -33,7 +33,7 @@ app.get("/api/twitter/get_id/:userName", function (req, res) {
 })
 
 
-app.post("/auth/twitter", function (req, res) {
+app.post("/oauth/twitter", function (req, res) {
     var params = req.params;
     console.debug("=====", params)
 
@@ -66,14 +66,26 @@ app.post("/auth/twitter", function (req, res) {
     }).catch((error) => {
         res.status(500).send(error);
     });
-})
+});
 
+
+app.post("/oauth/discord", function (req, res) {
+    var params = req.params;
+    console.debug("=====", params)
+
+
+    var body = req.body;
+    console.debug("======body", body);
+
+
+    res.send('ok');
+});
 
 app.get("/alive", function (req, res) {
     var params = req.params;
     res.send("ok");
-})
+});
 
 app.listen(port, () => {
     console.log(`SA listening on http://127.0.0.1:8888`)
-})
+});

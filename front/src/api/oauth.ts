@@ -12,7 +12,7 @@ export interface ITwitterUser {
 }
 
 export const oauthTwitter = (code: string, redirectUri: string): Promise<ResponseData<ITwitterUser>> => {
-    return request.post("/auth/twitter", { code, redirectUri });
+    return request.post("/oauth/twitter", { code, redirectUri });
 };
 
 export interface IDiscordUser {
@@ -21,5 +21,5 @@ export interface IDiscordUser {
 }
 
 export const oauthDiscord = (code: string, redirectUri: string): Promise<ResponseData<IDiscordUser>> => {
-    return request.post("/auth/discord", { code, redirectUri });
+    return request.post("/oauth/discord", { code, redirectUri });
 };
