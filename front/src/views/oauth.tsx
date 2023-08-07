@@ -11,6 +11,7 @@ const Twitter = memo(({ code, msgFrom }: IProps) => {
   useEffect(() => {
     const bc = new BroadcastChannel("SA_OAUTH");
     bc.postMessage({ code, msgFrom, msgType: LOCAL_OAUTH_KEY.Twitter });
+    console.log('post message done.!!!')
     window.close();
   }, [code]);
   return <>oauth success</>;
