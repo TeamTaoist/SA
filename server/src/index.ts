@@ -59,7 +59,6 @@ app.post("/auth_callback/twitter", function (req, res) {
         headers: {
             "Content-Type": "application/x-www-form-urlencoded",
             "Accept": "application/json",
-            "Authorization": `Bearer ${BearerToken}`
         },
         data: axios.toFormData(formdata)
     }).then((dataResult) => {
