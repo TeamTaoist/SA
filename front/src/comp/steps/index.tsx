@@ -14,7 +14,7 @@ import VerifyStep from "./verify";
 const steps = ["Login Twitter", "Connect Wallet", "Verify"];
 
 export default function Steps() {
-  const [activeStep, setActiveStep] = React.useState(0);
+  const [activeStep, setActiveStep] = React.useState(1);
   const [skipped, setSkipped] = React.useState(new Set<number>());
 
   const isStepOptional = (step: number) => {
