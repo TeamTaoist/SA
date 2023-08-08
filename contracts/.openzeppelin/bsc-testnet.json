@@ -1,0 +1,128 @@
+{
+  "manifestVersion": "3.2",
+  "admin": {
+    "address": "0x39d21758544Ef75251A0DC7C6FB1d7249c5e4d6F",
+    "txHash": "0x5617686954c0d863c75e4b80d8f57e987d47b05ca35da191ed909054c1ea11e8"
+  },
+  "proxies": [
+    {
+      "address": "0x088463376a5aebe9605d5b503140cB7d5aFcF2DD",
+      "txHash": "0x9458ac8b724deadd372cae696899d2ff8631686a483305176ac69f8d376105ef",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x91837273724a4a4F7D379F4Fd319Ae369d66BEf7",
+      "txHash": "0x8fb2f17c0ecb4e2fd3547e73f61ae99e30a20c43fb27e7ff0bd639fe2a1e0a6a",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xe849e51a1bb4e28De675843aFD9ECbEf082cEFC6",
+      "txHash": "0x0b580c094f79b983e927acfe9651faf87986845575291ef8a901b9a29abd0f90",
+      "kind": "transparent"
+    }
+  ],
+  "impls": {
+    "7304125329f8a7b37315e67f09d272a4e48ca5cb9428ea976ca8ca57276771fa": {
+      "address": "0xA0faf46f2C36a6Ea29f889cE1Ed43E97167803C0",
+      "txHash": "0xe66833e7fcfdae495c97c64a68eb8fb047f618f7234041efcb15949681291ee8",
+      "layout": {
+        "solcVersion": "0.8.19",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:68"
+          },
+          {
+            "label": "_status",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256",
+            "contract": "ReentrancyGuardUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:38"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "ReentrancyGuardUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:88"
+          },
+          {
+            "label": "_roles",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_mapping(t_bytes32,t_struct(RoleData)2281_storage)",
+            "contract": "AccessControl",
+            "src": "@openzeppelin/contracts/access/AccessControl.sol:56"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_struct(RoleData)2281_storage)": {
+            "label": "mapping(bytes32 => struct AccessControl.RoleData)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(RoleData)2281_storage": {
+            "label": "struct AccessControl.RoleData",
+            "members": [
+              {
+                "label": "members",
+                "type": "t_mapping(t_address,t_bool)",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "adminRole",
+                "type": "t_bytes32",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    }
+  }
+}
