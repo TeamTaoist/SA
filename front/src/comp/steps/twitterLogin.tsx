@@ -88,7 +88,7 @@ const OptionBox = styled(Box)`
 `;
 const MainButtonBox = styled.div`
   display: flex;
-  height: 300px;
+  height: 200px;
   flex-direction: column;
   justify-content: center;
   align-items: center;

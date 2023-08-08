@@ -11,11 +11,13 @@ import ConnectWalletStep from "./connectWallet";
 import TwitterLoginStep from "./twitterLogin";
 import VerifyStep from "./verify";
 import AttestStep from "./attest";
-import StepProvider from "../../providers/stepProvider"
+import StepProvider from "../../providers/stepProvider";
+import { useWeb3React } from "@web3-react/core";
 
 const steps = ["Connect Wallet", "Login Twitter", "Verify", "Attest"];
 
 export default function Steps() {
+  const { account } = useWeb3React();
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set<number>());
 
@@ -49,20 +51,29 @@ export default function Steps() {
   const showCurrentStep = () => {
     switch (activeStep) {
       case 1:
-        return <TwitterLoginStep handleBack={handleBack} handleNext={handleNext} />;
+        return (
+          <TwitterLoginStep handleBack={handleBack} handleNext={handleNext} />
+        );
       case 2:
         return <VerifyStep handleBack={handleBack} handleNext={handleNext} />;
       case 3:
         return <AttestStep handleBack={handleBack} />;
       default:
-        return (
-          <ConnectWalletStep handleNext={handleNext} />
-        );
+        return <ConnectWalletStep handleNext={handleNext} />;
     }
   };
   return (
     <StepProvider>
       <StepsContainer>
+        <StepHeader>
+          {}
+          <span>
+            {account
+              ? `Account: ${account.slice(0, 6)}...${account.slice(-4)}`
+              : ""}
+          </span>
+        </StepHeader>
+
         <Box sx={{ width: "100%" }}>
           <Stepper activeStep={activeStep} alternativeLabel>
             {steps.map((label, index) => {
@@ -88,7 +99,7 @@ export default function Steps() {
               </Box>
             </React.Fragment>
           ) : (
-            <div style={{marginTop: "40px"}}>{showCurrentStep()}</div>
+            <div style={{ marginTop: "40px" }}>{showCurrentStep()}</div>
           )}
         </Box>
       </StepsContainer>
@@ -106,6 +117,16 @@ const StepsContainer = styled.div`
   margin: 0 auto;
   margin-top: 20px;
   min-width: 800px;
-  padding: 40px 30px;
+  padding: 0 30px 40px;
   position: relative;
+`;
+
+const StepHeader = styled.div`
+  height: 40px;
+  color: #666;
+  line-height: 40px;
+  margin: 30px 40px;
+  padding: 0 40px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 30px;
 `;
