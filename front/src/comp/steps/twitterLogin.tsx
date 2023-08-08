@@ -13,12 +13,17 @@ const POPUP_HEIGHT = 700;
 const POPUP_WIDTH = 600;
 
 interface IProps {
-  handleBack?: () => void;
+  handleBack: () => void;
   handleNext: () => void;
 }
 
-export default function TwitterLoginStep({ handleNext }: IProps) {
+export default function TwitterLoginStep({ handleBack, handleNext }: IProps) {
   const { dispatch } = useStepContext();
+
+  const onClickBack = () => {
+    // do sth before go to back step if you want
+    handleBack();
+  };
 
   const onClickNext = () => {
     // do sth before go to next step if you want
@@ -33,14 +38,16 @@ export default function TwitterLoginStep({ handleNext }: IProps) {
     window.open(url, "OAuth2", `height=${POPUP_HEIGHT},width=${POPUP_WIDTH},top=${top},left=${left}`);
   };
 
-  const handleOauth = async (code: string, msgType: string, writeLocal?: boolean) => {
+  const handleOauth = async (code: string, msgType: string) => {
     try {
-      let resp;
-      if (msgType === LOCAL_OAUTH_KEY.Twitter) {
-        resp = await oauthTwitter(code, TWITTER_REDIRECT_URL);
-      }
-      dispatch({ type: StepActionType.SET_TWITTER_DATA, payload: resp?.data });
-      return resp?.data;
+      // let resp;
+      // if (msgType === LOCAL_OAUTH_KEY.Twitter) {
+      //   resp = await oauthTwitter(code, TWITTER_REDIRECT_URL);
+      // }
+      dispatch({ type: StepActionType.SET_TWITTER_DATA, payload: { code } });
+
+      handleNext();
+      // return resp?.data;
     } catch (genericError) {
       console.error(genericError);
     }
@@ -48,7 +55,7 @@ export default function TwitterLoginStep({ handleNext }: IProps) {
 
   useSubcribe("SA_OAUTH_EVENT_TWITTER", async (_: any, { code, msgFrom, msgType }: { code: string; msgFrom: string; msgType: string }) => {
     console.log(`from ${msgFrom}`);
-    await handleOauth(code, msgType, true);
+    await handleOauth(code, msgType);
   });
 
   return (
@@ -57,6 +64,9 @@ export default function TwitterLoginStep({ handleNext }: IProps) {
         Signin Twitter
       </Button>
       <OptionBox sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
+      <Button color="inherit" onClick={onClickBack} sx={{ mr: 1 }}>
+          Back
+        </Button>
         <Box sx={{ flex: "1 1 auto" }} />
         <Button onClick={onClickNext}>Next</Button>
       </OptionBox>

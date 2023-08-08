@@ -10,9 +10,10 @@ import Typography from "@mui/material/Typography";
 import ConnectWalletStep from "./connectWallet";
 import TwitterLoginStep from "./twitterLogin";
 import VerifyStep from "./verify";
+import AttestStep from "./attest";
 import StepProvider from "../../providers/stepProvider"
 
-const steps = ["Login Twitter", "Connect Wallet", "Verify"];
+const steps = ["Connect Wallet", "Login Twitter", "Verify", "Attest"];
 
 export default function Steps() {
   const [activeStep, setActiveStep] = React.useState(0);
@@ -48,13 +49,15 @@ export default function Steps() {
   const showCurrentStep = () => {
     switch (activeStep) {
       case 1:
-        return (
-          <ConnectWalletStep handleBack={handleBack} handleNext={handleNext} />
-        );
+        return <TwitterLoginStep handleBack={handleBack} handleNext={handleNext} />;
       case 2:
-        return <VerifyStep handleBack={handleBack} />;
+        return <VerifyStep handleBack={handleBack} handleNext={handleNext} />;
+      case 3:
+        return <AttestStep handleBack={handleBack} />;
       default:
-        return <TwitterLoginStep handleNext={handleNext} />;
+        return (
+          <ConnectWalletStep handleNext={handleNext} />
+        );
     }
   };
   return (

@@ -11,9 +11,9 @@ export interface ITwitterUser {
     username: string;
 }
 
-export const oauthTwitter = (code: string, redirectUri: string): Promise<ResponseData<ITwitterUser>> => {
+export const oauthTwitter = (account: string, code: string, redirectUri: string): Promise<ResponseData<ITwitterUser>> => {
     console.log(`code: ${code}, redirect uri: ${redirectUri}`);
-    return request.post("/oauth/twitter", { code: code, redirect_uri: redirectUri });
+    return request.post("/oauth/twitter", { code: code, redirect_uri: redirectUri, receiver: account });
 };
 
 export interface IDiscordUser {
