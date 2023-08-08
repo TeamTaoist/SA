@@ -27,7 +27,7 @@ const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use(express_1.default.json());
-function signAttestMessage(receiver, twitterId, twitterName) {
+function signAttestMessage(saContract, receiver, twitterId, twitterName, twitterUserName) {
     return __awaiter(this, void 0, void 0, function* () {
         const provider = ethers_1.ethers.getDefaultProvider("homestead");
         const wallet = new ethers_1.ethers.Wallet(ETH_PRIV_KEY, provider);
@@ -38,30 +38,16 @@ function signAttestMessage(receiver, twitterId, twitterName) {
             attester: address,
             receiver: receiver,
             timestamp: timestamp,
+            saContract: saContract,
             payload: payload
         };
         const abiCoder = ethers_1.ethers.AbiCoder.defaultAbiCoder();
-        const packedData = abiCoder.encode(["address", "address", "uint256", "string"], [address, receiver, timestamp, twitterName]);
+        const saPayload = ethers_1.ethers.solidityPacked(["string", "string", "string"], [twitterId, twitterName, twitterUserName]);
+        const packedData = abiCoder.encode(["address", "address", "uint256", "string", "string"], [address, receiver, BigInt(timestamp), saContract, saPayload]);
         const signature = yield wallet.signMessage(packedData);
-        // const returnData = Object.assign({ attesterSig: signature, ...data })
         return Object.assign(Object.assign({ attesterSig: signature }, data));
-        // return signature;
     });
 }
-// function signAttestMessage(attester: string, receiver: string, saContract: string, timestamp: string, msg: string,): string {
-//     const signingKey = new ethers.SigningKey(ETH_PRIV_KEY);
-//     const address = ethers.computeAddress(signingKey.publicKey);
-//     console.log(msg);
-//     const data = {
-//         signer: address,
-//         ts: timestamp,
-//         ...msg
-//     }
-//     console.log('data', data);
-//     const signature = signingKey.sign(ethers.keccak256(ethers.toUtf8Bytes(JSON.stringify(data))));
-//     console.log('signature', signature.serialized);
-//     return Object.assign({ sig: signature.serialized, ...data });
-// }
 app.get("/api/twitter/get_id/:userName", function (req, res) {
     var params = req.params;
     console.debug("=====", params.userName);
@@ -86,13 +72,14 @@ app.post("/oauth/twitter", function (req, res) {
     var code = req.body.code;
     var redirect_uri = req.body.redirect_uri;
     var receiver = req.body.receiver;
+    var saContract = req.body.saContract;
     var formdata = {
         "client_id": ClientID,
         "client_secret": ClientSecret,
         "grant_type": "authorization_code",
         "code_verifier": "challenge",
-        "code": req.body.code,
-        "redirect_uri": req.body.redirect_uri,
+        "code": code,
+        "redirect_uri": redirect_uri,
     };
     console.debug("=====formdata", formdata);
     console.debug("=====data", axios_1.default.toFormData(formdata));
@@ -117,7 +104,7 @@ app.post("/oauth/twitter", function (req, res) {
             }
         }).then((dataResult) => __awaiter(this, void 0, void 0, function* () {
             console.log(dataResult.data);
-            var result = yield signAttestMessage(receiver, dataResult.data.data.id, dataResult.data.data.username);
+            var result = yield signAttestMessage(saContract, receiver, dataResult.data.data.id, dataResult.data.data.name, dataResult.data.data.username);
             console.log(result);
             res.send(JSON.stringify(result));
         }));
