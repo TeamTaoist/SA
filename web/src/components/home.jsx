@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import BgImg from "../images/bg.png";
+import BgImg from "../images/bg.jpg";
 import LogoImg from "../images/logo.svg";
 import MainImg from "../images/img.svg";
 
