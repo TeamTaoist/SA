@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { useWeb3React } from "@web3-react/core";
+import { useStepContext } from "../../providers/stepProvider";
 
 interface IProps {
   handleBack: () => void;
@@ -10,6 +11,7 @@ interface IProps {
 
 export default function VerifyStep({ handleBack }: IProps) {
   const { account, provider } = useWeb3React();
+  const { state: { twitter_data } } = useStepContext();
   const onClickBack = () => {
     // do sth before go to back step if you want
     handleBack();
@@ -18,8 +20,9 @@ export default function VerifyStep({ handleBack }: IProps) {
     if (!provider) {
       return;
     }
+    console.log("twitter_data:", twitter_data);
     // sign msg
-    const signData = await provider.send("personal_sign", ["", account]);
+    // const signData = await provider.send("personal_sign", ["", account]);
   };
   return (
     <VerifyStepStyle>

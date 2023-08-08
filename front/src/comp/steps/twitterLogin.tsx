@@ -6,6 +6,7 @@ import useSubcribe from "../useSubscribe";
 
 
 import { TWITTER_APP_CLIENT_ID, TWITTER_REDIRECT_URL, LOCAL_OAUTH_KEY } from "../../constants";
+import { StepActionType, useStepContext } from "../../providers/stepProvider";
 
 
 const POPUP_HEIGHT = 700;
@@ -17,6 +18,7 @@ interface IProps {
 }
 
 export default function TwitterLoginStep({ handleNext }: IProps) {
+  const { dispatch } = useStepContext();
 
   const onClickNext = () => {
     // do sth before go to next step if you want
@@ -37,6 +39,7 @@ export default function TwitterLoginStep({ handleNext }: IProps) {
       if (msgType === LOCAL_OAUTH_KEY.Twitter) {
         resp = await oauthTwitter(code, TWITTER_REDIRECT_URL);
       }
+      dispatch({ type: StepActionType.SET_TWITTER_DATA, payload: resp?.data });
       return resp?.data;
     } catch (genericError) {
       console.error(genericError);
