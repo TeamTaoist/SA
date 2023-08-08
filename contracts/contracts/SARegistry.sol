@@ -7,6 +7,8 @@ import "@openzeppelin/contracts-upgradeable/utils/cryptography/SignatureCheckerU
 
 import "./ISA.sol";
 
+import "hardhat/console.sol";
+
 // upgradeable contract
 contract SARegistry is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     mapping(address => bool) public registeredSAs;
@@ -79,22 +81,42 @@ contract SARegistry is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     }
 
     function attest(
-        address attester_,
-        bytes memory signature_,
-        address sa_,
-        address to_,
-        uint256 tokenId_,
-        string memory extra_
-    )
-        public
-        onlyAttester(attester_)
-        onlyValidSA(sa_)
-        nonReentrant
-        returns (uint256)
-    {
-        ISocialAttestationInterface sa = ISocialAttestationInterface(sa_);
+        address attester,
+        bytes memory attestSig,
+        address sa,
+        address to,
+        bytes memory extra
+    ) public onlyAttester(attester) onlyValidSA(sa) returns (uint256) {
+        bytes memory t = abi.encode(sa, to, extra);
+        console.logBytes(t);
 
-        return sa.issue(to_, tokenId_, extra_);
+        bytes32 hh = keccak256(t);
+        console.logBytes32(hh);
+
+        bytes32 hashValue = hashMessage(abi.encodePacked(hh));
+
+        // console.logBytes(extra);
+        console.logBytes32(hashValue);
+        console.logBytes(attestSig);
+        require(
+            verifySignature(attester, hashValue, attestSig),
+            "SARegistry: Invalid signature"
+        );
+        return ISocialAttestationInterface(sa).issue(to, extra);
+    }
+
+    function hashMessage(bytes memory message) public pure returns (bytes32) {
+        return
+            keccak256(
+                    abi.encodePacked(
+                        "\x19Ethereum Signed Message:\n32",
+                        keccak256(
+                            abi.encode(
+                                message
+                            )
+                        )
+                    )
+                );
     }
 
     function verifySignature(
@@ -105,12 +127,13 @@ contract SARegistry is OwnableUpgradeable, ReentrancyGuardUpgradeable {
         return
             SignatureCheckerUpgradeable.isValidSignatureNow(
                 signer,
-                keccak256(
-                    abi.encodePacked(
-                        "\x19Ethereum Signed Message:\n32",
-                        keccak256(abi.encodePacked(hashValue))
-                    )
-                ),
+                // keccak256(
+                //     abi.encodePacked(
+                //         "\x19Ethereum Signed Message:\n32",
+                //         keccak256(abi.encodePacked(hashValue))
+                //     )
+                // ),
+                hashValue,
                 signature
             );
     }

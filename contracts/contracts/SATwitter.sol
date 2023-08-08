@@ -26,18 +26,20 @@ contract SATwitter is ISocialAttestationInterface, ERC721, AccessControl {
     // fixme: need handle re-issue token case!
     function issue(
         address to,
-        uint256 tokenId,
-        string memory data
-    ) public onlyRole(ATTESTER_ROLE) returns (uint256) {
-        return _issueSA(to, tokenId, data);
+        bytes memory data
+    ) external override onlyRole(ATTESTER_ROLE) returns (uint256) {
+        return _issueSA(to, data);
     }
 
     // fixme: need handle re-issue token case!
     function _issueSA(
         address to,
-        uint256 twitterUserId,
-        string memory twitterHandle
-    ) public onlyRole(ATTESTER_ROLE) returns (uint256) {
+        bytes memory data
+    ) internal returns (uint256) {
+        (bytes32 sig, uint256 twitterUserId, uint256 timestamp) = abi.decode(
+            data,
+            (bytes32, uint256, uint256)
+        );
         super._safeMint(to, twitterUserId);
         return twitterUserId;
     }
