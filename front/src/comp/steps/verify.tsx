@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-
+import { ethers } from 'ethers';
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { useWeb3React } from "@web3-react/core";
@@ -33,11 +33,21 @@ export default function VerifyStep({ handleBack, handleNext }: IProps) {
       return;
     }
 
-    console.log(twitter_data);
+    console.log('twitter_data', twitter_data);
+
+    const { attester, attesterSig, receiver, timestamp, saContract } = twitter_data;
+    const { twitterId, twitterName, twitterUserName } = twitter_data.payload;
+
+    const saPayload = ethers.solidityPacked(["string", "string", "string"], [twitterId, twitterName, twitterUserName]);
+    const packedData = ethers.keccak256(ethers.solidityPacked(["address", "address", "uint256", "address", "bytes"], [attester, receiver, BigInt(timestamp), saContract, saPayload]));
 
     // sign msg
-    const signData = await provider.send("personal_sign", ["", account]);
+    const signData = await provider.send("personal_sign", [packedData, account]);
 
+
+    
+
+    console.log('signData', signData);
 
     // await oauthTwitter(twitter_data.code, TWITTER_REDIRECT_URL, account!);
   };

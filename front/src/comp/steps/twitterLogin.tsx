@@ -51,7 +51,7 @@ export default function TwitterLoginStep({ handleBack, handleNext }: IProps) {
 
         console.log(resp);
 
-        dispatch({ type: StepActionType.SET_TWITTER_DATA, payload: { code } });
+        dispatch({ type: StepActionType.SET_TWITTER_DATA, payload: resp.data });
       }
 
 
