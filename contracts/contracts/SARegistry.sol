@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/cryptography/SignatureCheckerUpgradeable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts-upgradeable/utils/cryptography/ECDSAUpgradeable.sol";
 
 import "./ISA.sol";
 import "hardhat/console.sol";
@@ -51,6 +52,16 @@ contract SARegistry is ReentrancyGuardUpgradeable, AccessControl {
         emit AttesterUnregistered(msg.sender, attester);
     }
 
+    function bytes32ToUintArray(
+        bytes32 _bytes32
+    ) public pure returns (uint8[] memory) {
+        uint8[] memory numberArray = new uint8[](32);
+        for (uint i = 0; i < 32; i++) {
+            numberArray[i] = uint8(_bytes32[i]);
+        }
+        return numberArray;
+    }
+
     function attest(
         address attester,
         bytes memory attesterSig,
@@ -71,24 +82,37 @@ contract SARegistry is ReentrancyGuardUpgradeable, AccessControl {
             abi.encodePacked(attester, user, timestamp, sa, saPayload)
         );
 
-        // // Check the signatures
-        // require(
-        //     SignatureCheckerUpgradeable.isValidSignatureNow(
-        //         attester,
-        //         dataToSign,
-        //         attesterSig
-        //     ),
-        //     "Invalid attester signature"
-        // );
+        uint8[] memory byteArray = bytes32ToUintArray(dataToSign);
+        for (uint i = 0; i < 32; i++) {
+            console.log("Byte %d: %d", i, byteArray[i]);
+        }
 
-        // require(
-        //     SignatureCheckerUpgradeable.isValidSignatureNow(
-        //         user,
-        //         dataToSign,
-        //         userSig
-        //     ),
-        //     "Invalid user signature"
-        // );
+        (
+            address recovered,
+            ECDSAUpgradeable.RecoverError error
+        ) = ECDSAUpgradeable.tryRecover(dataToSign, attesterSig);
+
+        console.log(attester);
+        console.log(recovered);
+
+        // Check the signatures
+        require(
+            SignatureCheckerUpgradeable.isValidSignatureNow(
+                attester,
+                dataToSign,
+                attesterSig
+            ),
+            "Invalid attester signature"
+        );
+
+        require(
+            SignatureCheckerUpgradeable.isValidSignatureNow(
+                user,
+                dataToSign,
+                userSig
+            ),
+            "Invalid user signature"
+        );
 
         // Call the issue function on the SA
         ISocialAttestationInterface saContract = ISocialAttestationInterface(
