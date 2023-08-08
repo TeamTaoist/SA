@@ -36,9 +36,8 @@ describe("SA", function () {
 
     it("should mint a token to the specified address if called by attester", async function () {
       const { saTwitter, owner, user } = await loadFixture(deployFixture);
-      const twitterUserId = 123456789;
       const abiCoder = ethers.AbiCoder.defaultAbiCoder();
-      const data = abiCoder.encode(["uint256"], [twitterUserId])
+      const data = abiCoder.encode(["string", "string", "string"], ["twitterId", "twitterHandle", "twitterName"])
 
       await expect(
         saTwitter.connect(owner).issue(user.address, data)
@@ -53,9 +52,8 @@ describe("SA", function () {
     it("should revert if called by non-attester", async function () {
       const { saTwitter, user } = await loadFixture(deployFixture);
 
-      const twitterUserId = 123456789;
       const abiCoder = ethers.AbiCoder.defaultAbiCoder();
-      const data = abiCoder.encode(["uint256"], [twitterUserId])
+      const data = abiCoder.encode(["string", "string", "string"], ["twitterId", "twitterHandle", "twitterName"])
 
       await expect(saTwitter.connect(user).issue(user.address, data)).to.be.reverted;
     });
@@ -63,13 +61,13 @@ describe("SA", function () {
     it("tokenURI should return valid URI for the minted token", async function () {
       const { saTwitter, user } = await loadFixture(deployFixture);
       const abiCoder = ethers.AbiCoder.defaultAbiCoder();
-      const data = abiCoder.encode(['uint256'], [12345]);
+      const data = abiCoder.encode(["string", "string", "string"], ["twitterId", "twitterHandle", "twitterName"])
       await saTwitter.issue(user.address, data);
       const uri = await saTwitter.tokenURI(1);
 
-      // expect(uri).to.contain("data:image/svg+xml;base64,");
+      expect(uri).to.contain("data:image/svg+xml;utf8,");
       expect(uri).to.contain('<svg xmlns="http://www.w3.org/2000/svg"');
-      expect(uri).to.contain("Twitter User ID: 12345");
+      expect(uri).to.contain("Twitter Handle: twitterHandle");
     });
   });
 
@@ -114,12 +112,10 @@ describe("SA", function () {
 
       const saTwitterAddress = await saTwitter.getAddress()
 
-      const abiCoder = ethers.AbiCoder.defaultAbiCoder();
-
       const timestamp = BigInt(await time.latest());// Get current block timestamp
-      const saPayload = ethers.solidityPacked(["uint256", "string"], [BigInt(123456789), "sdsadfsdasd"]);
 
-      // console.log(saPayload);
+      const abiCoder = ethers.AbiCoder.defaultAbiCoder();
+      const saPayload = abiCoder.encode(["string", "string", "string"], ["twitterId", "twitterHandle", "twitterName"])
 
       // Construct the data to be signed
       const dataToSign = ethers.keccak256(
@@ -129,40 +125,11 @@ describe("SA", function () {
         )
       );
 
-      // console.log('ori dataToSign', dataToSign);
-
-      // const packed = await saRegistry.encodePacked(attester.address, user.address, timestamp, saTwitterAddress, saPayload);
-      // console.log('[SARegistry] packed dataToSign', packed);
-
-      // const msgHash = await saRegistry.getMessageHash(attester.address, user.address, timestamp, saTwitterAddress, saPayload);
-      // console.log('[SARegistry] msgHash of dataToSign', msgHash);
-
-      // const ethMsgHash = await saRegistry.getEthSignedMessageHash(msgHash);
-      // console.log('[SARegistry] ethMsgHash of dataToSign', ethMsgHash);
-
-
       const messageBytes = ethers.getBytes(dataToSign)
 
       // Attester and user sign the data
-
       const attesterSig = await attester.signMessage(messageBytes);
       const userSig = await user.signMessage(messageBytes);
-
-      // Verify Attester's signature
-      const recoveredAttesterAddress = ethers.verifyMessage(messageBytes, attesterSig);
-      if (recoveredAttesterAddress.toLowerCase() === attester.address.toLowerCase()) {
-        console.log("Attester's signature is valid!");
-      } else {
-        console.log("Invalid signature from attester.");
-      }
-
-      // Verify User's signature
-      const recoveredUserAddress = ethers.verifyMessage(messageBytes, userSig);
-      if (recoveredUserAddress.toLowerCase() === user.address.toLowerCase()) {
-        console.log("User's signature is valid!");
-      } else {
-        console.log("Invalid signature from user.");
-      }
 
       // Execute the attest function
       await saRegistry.attest(attester.address, attesterSig, user.address, userSig, timestamp, saTwitterAddress, saPayload);

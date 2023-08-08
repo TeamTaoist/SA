@@ -229,19 +229,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "chars",
-    "outputs": [
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "uint256",
