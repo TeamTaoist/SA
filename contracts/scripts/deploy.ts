@@ -1,22 +1,32 @@
-import { ethers } from "hardhat";
+import { ethers, upgrades } from "hardhat";
+import deployed from "./deployed/";
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const unlockTime = currentTimestampInSeconds + 60;
 
-  const lockedAmount = ethers.parseEther("0.001");
+  const [deployer] = await ethers.getSigners();
+  console.log(`deployer: ${deployer.address}`);
 
-  const lock = await ethers.deployContract("Lock", [unlockTime], {
-    value: lockedAmount,
-  });
+  console.log("Deploy SARegistry contract...");
+  const saRegistry = await ethers.getContractAt("SARegistry", deployed.getSARegistryContract());
+  console.log('deployed SARegistry address: ', await saRegistry.getAddress());
 
-  await lock.waitForDeployment();
 
-  console.log(
-    `Lock with ${ethers.formatEther(
-      lockedAmount
-    )}ETH and unlock timestamp ${unlockTime} deployed to ${lock.target}`
-  );
+  console.log("Deploy SATwitter contract...");
+  const saTwitter = await ethers.getContractAt("SATwitter", deployed.getSATwitterContract());
+  console.log('deployed SATwitter address: ', await saTwitter.getAddress());
+
+  // console.log("Init configuration...");
+
+  console.log("Grant to SARegister Contract...");
+  const asRegistryAddress = await saRegistry.getAddress();
+  await saTwitter.grantRole(ethers.keccak256(ethers.toUtf8Bytes("ATTESTER_ROLE")), asRegistryAddress);
+
+  // console.log("Register Twitter Attestion...");
+  // const saTwitterAddress = await saTwitter.getAddress()
+  // await saRegistry.registerSA(saTwitterAddress);
+
+  // console.log("Register attester...");
+  // await saRegistry.registerAttester(deployer.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

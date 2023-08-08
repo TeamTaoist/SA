@@ -23,7 +23,7 @@ async function main() {
 
   console.log("Grant to SARegister Contract...");
   const asRegistryAddress = await saRegistry.getAddress();
-  await saTwitter.grantRole(ethers.keccak256(ethers.toUtf8Bytes("ATTESTER_ROLE")), asRegistryAddress);
+  await saTwitter.grantRole(ethers.keccak256(ethers.getBytes("ATTESTER_ROLE")), asRegistryAddress);
 
   console.log("Register Twitter Attestion...");
   const saTwitterAddress = await saTwitter.getAddress()
