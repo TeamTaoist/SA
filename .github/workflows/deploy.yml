@@ -28,12 +28,12 @@ jobs:
        run: export CI=false && npm run build
        
     
-     - name: Deploy to GitHub Pages
-       if: success()
-       uses: crazy-max/ghaction-github-pages@v3
-       with:
-          target_branch: gh-pages
-          build_dir: ./front/build
-          fqdn: sa.0xd.app
-       env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+     # - name: Deploy to GitHub Pages
+     #   if: success()
+     #   uses: crazy-max/ghaction-github-pages@v3
+     #   with:
+     #      target_branch: gh-pages
+     #      build_dir: ./front/build
+     #      fqdn: sa.0xd.app
+     #   env:
+     #      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
