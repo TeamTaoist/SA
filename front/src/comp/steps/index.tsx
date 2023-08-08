@@ -11,7 +11,6 @@ import ConnectWalletStep from "./connectWallet";
 import TwitterLoginStep from "./twitterLogin";
 import VerifyStep from "./verify";
 import AttestStep from "./attest";
-import StepProvider from "../../providers/stepProvider";
 import { useWeb3React } from "@web3-react/core";
 
 const steps = ["Connect Wallet", "Login Twitter", "Verify", "Attest"];
@@ -20,10 +19,6 @@ export default function Steps() {
   const { account } = useWeb3React();
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set<number>());
-
-  const isStepOptional = (step: number) => {
-    return step === 1;
-  };
 
   const isStepSkipped = (step: number) => {
     return skipped.has(step);
@@ -63,47 +58,45 @@ export default function Steps() {
     }
   };
   return (
-    <StepProvider>
-      <StepsContainer>
-        <StepHeader>
-          {}
-          <span>
-            {account
-              ? `Account: ${account.slice(0, 6)}...${account.slice(-4)}`
-              : ""}
-          </span>
-        </StepHeader>
+    <StepsContainer>
+      <StepHeader>
+        {}
+        <span>
+          {account
+            ? `Account: ${account.slice(0, 6)}...${account.slice(-4)}`
+            : ""}
+        </span>
+      </StepHeader>
 
-        <Box sx={{ width: "100%" }}>
-          <Stepper activeStep={activeStep} alternativeLabel>
-            {steps.map((label, index) => {
-              const stepProps: { completed?: boolean } = {};
-              const labelProps: {
-                optional?: React.ReactNode;
-              } = {};
-              return (
-                <Step key={label} {...stepProps}>
-                  <StepLabel {...labelProps}>{label}</StepLabel>
-                </Step>
-              );
-            })}
-          </Stepper>
-          {activeStep === steps.length ? (
-            <React.Fragment>
-              <Typography sx={{ mt: 2, mb: 1 }}>
-                All steps completed - you&apos;re finished
-              </Typography>
-              <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-                <Box sx={{ flex: "1 1 auto" }} />
-                <Button onClick={handleReset}>Reset</Button>
-              </Box>
-            </React.Fragment>
-          ) : (
-            <div style={{ marginTop: "40px" }}>{showCurrentStep()}</div>
-          )}
-        </Box>
-      </StepsContainer>
-    </StepProvider>
+      <Box sx={{ width: "100%" }}>
+        <Stepper activeStep={activeStep} alternativeLabel>
+          {steps.map((label, index) => {
+            const stepProps: { completed?: boolean } = {};
+            const labelProps: {
+              optional?: React.ReactNode;
+            } = {};
+            return (
+              <Step key={label} {...stepProps}>
+                <StepLabel {...labelProps}>{label}</StepLabel>
+              </Step>
+            );
+          })}
+        </Stepper>
+        {activeStep === steps.length ? (
+          <React.Fragment>
+            <Typography sx={{ mt: 2, mb: 1 }}>
+              All steps completed - you&apos;re finished
+            </Typography>
+            <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
+              <Box sx={{ flex: "1 1 auto" }} />
+              <Button onClick={handleReset}>Reset</Button>
+            </Box>
+          </React.Fragment>
+        ) : (
+          <div style={{ marginTop: "40px" }}>{showCurrentStep()}</div>
+        )}
+      </Box>
+    </StepsContainer>
   );
 }
 
