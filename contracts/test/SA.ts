@@ -106,19 +106,38 @@ describe("SA", function () {
         const abiCoder = ethers.AbiCoder.defaultAbiCoder();
 
         const timestamp = time.latest().toString(); // Get current block timestamp
-        const saPayload = abiCoder.encode(["uint256"], [123456789]);
+        const saPayload = ethers.solidityPacked(["uint256"], [123456789]);
         
         // Construct the data to be signed
         const dataToSign = ethers.keccak256(
-            abiCoder.encode(
+          ethers.solidityPacked(
                 ["address", "address", "string", "address", "bytes"],
                 [registryAttester.address, user.address, timestamp, saTwitterAddress, saPayload]
-            )
+          )
         );
-        
+
+        const message = ethers.getBytes(dataToSign)
+        console.log(message)
+
         // Attester and user sign the data
-        const attesterSig = await registryAttester.signMessage(ethers.toUtf8Bytes(dataToSign));
-        const userSig = await user.signMessage(ethers.toUtf8Bytes(dataToSign));
+        const attesterSig = await registryAttester.signMessage(ethers.getBytes(dataToSign));
+        const userSig = await user.signMessage(ethers.getBytes(dataToSign));
+
+        // Verify Attester's signature
+        const recoveredAttesterAddress = ethers.verifyMessage(message, attesterSig);
+        if (recoveredAttesterAddress.toLowerCase() === registryAttester.address.toLowerCase()) {
+            console.log("Attester's signature is valid!");
+        } else {
+            console.log("Invalid signature from attester.");
+        }
+
+        // Verify User's signature
+        const recoveredUserAddress = ethers.verifyMessage(message, userSig);
+        if (recoveredUserAddress.toLowerCase() === user.address.toLowerCase()) {
+            console.log("User's signature is valid!");
+        } else {
+            console.log("Invalid signature from user.");
+        }
 
         // Execute the attest function
         await saRegistry.attest(registryAttester.address, attesterSig, user.address, userSig, timestamp, saTwitterAddress, saPayload);
