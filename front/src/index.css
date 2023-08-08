@@ -1,15 +1,37 @@
-body {
+body,
+html {
+  min-height: 100%;
+  padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #fff;
+  font-family: "SourceHanSansSC-Normal";
+}
+* {
+  scrollbar-width: none !important;
+  &::-webkit-scrollbar {
+    width: 0;
+    display: none;
+  }
+}
+ul,
+li,
+dl,
+dt,
+dd {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+a {
+  text-decoration: none;
+  color: unset;
+
+  &:hover {
+    color: unset;
+  }
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
 
@@ -18,5 +40,15 @@ code {
   width: 100vw;
   height: 100vh;
   box-sizing: border-box;
-  background: linear-gradient(to right, rgb(184,236,227),  #FDEAE3);
+  background: linear-gradient(to right, rgb(184, 236, 227),#B1D7E0, #fdeae3);
+}
+
+
+@font-face {
+  font-family: "SourceHanSansSC-Normal";
+  src: url('./fonts/SourceHanSansSC-Normal.otf');
+}
+@font-face {
+  font-family: "SourceHanSansSC-Heavy";
+  src: url('./fonts/SourceHanSansSC-Heavy.otf');
 }

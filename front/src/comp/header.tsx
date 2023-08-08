@@ -1,11 +1,13 @@
 import styled from "@emotion/styled";
 import LogoSrc from "../assets/logo.svg";
-
+import { Link } from "react-router-dom";
 
 export default function Header() {
     return (
       <HeaderStyle>
-        <img src={LogoSrc} alt="" />
+        <Link to="/">
+          <img src={LogoSrc} alt="" />
+        </Link>
       </HeaderStyle>
     );
 }
