@@ -52,22 +52,22 @@ contract SARegistry is ReentrancyGuardUpgradeable, AccessControl {
         emit AttesterUnregistered(msg.sender, attester);
     }
 
-    function bytes32ToUintArray(
-        bytes32 _bytes32
-    ) public pure returns (uint8[] memory) {
-        uint8[] memory numberArray = new uint8[](32);
-        for (uint i = 0; i < 32; i++) {
-            numberArray[i] = uint8(_bytes32[i]);
-        }
-        return numberArray;
-    }
+    // function bytes32ToUintArray(
+    //     bytes32 _bytes32
+    // ) public pure returns (uint8[] memory) {
+    //     uint8[] memory numberArray = new uint8[](32);
+    //     for (uint i = 0; i < 32; i++) {
+    //         numberArray[i] = uint8(_bytes32[i]);
+    //     }
+    //     return numberArray;
+    // }
 
     function attest(
         address attester,
         bytes memory attesterSig,
         address user,
         bytes memory userSig,
-        string memory timestamp,
+        uint256 timestamp,
         address sa,
         bytes memory saPayload
     ) public returns (uint256) {
@@ -78,46 +78,70 @@ contract SARegistry is ReentrancyGuardUpgradeable, AccessControl {
         require(hasRole(SA_ROLE, sa), "SARegistry: SA is not registered");
 
         // Construct the data
-        bytes32 dataToSign = keccak256(
-            abi.encodePacked(attester, user, timestamp, sa, saPayload)
+        bytes32 dataHash = getEthSignedMessageHash(
+            getMessageHash(attester, user, timestamp, sa, saPayload)
         );
 
-        // uint8[] memory byteArray = bytes32ToUintArray(dataToSign);
-        // for (uint i = 0; i < 32; i++) {
-        //     console.log("Byte %d: %d", i, byteArray[i]);
-        // }
+        // Check the signatures
+        require(
+            SignatureCheckerUpgradeable.isValidSignatureNow(
+                attester,
+                dataHash,
+                attesterSig
+            ),
+            "Invalid attester signature"
+        );
 
-        // (
-        //     address recovered,
-        //     ECDSAUpgradeable.RecoverError error
-        // ) = ECDSAUpgradeable.tryRecover(dataToSign, attesterSig);
-
-        // console.log(attester);
-        // console.log(recovered);
-
-        // // Check the signatures
-        // require(
-        //     SignatureCheckerUpgradeable.isValidSignatureNow(
-        //         attester,
-        //         dataToSign,
-        //         attesterSig
-        //     ),
-        //     "Invalid attester signature"
-        // );
-
-        // require(
-        //     SignatureCheckerUpgradeable.isValidSignatureNow(
-        //         user,
-        //         dataToSign,
-        //         userSig
-        //     ),
-        //     "Invalid user signature"
-        // );
+        require(
+            SignatureCheckerUpgradeable.isValidSignatureNow(
+                user,
+                dataHash,
+                userSig
+            ),
+            "Invalid user signature"
+        );
 
         // Call the issue function on the SA
         ISocialAttestationInterface saContract = ISocialAttestationInterface(
             sa
         );
         return saContract.issue(user, saPayload);
+    }
+
+    function getMessageHash(
+        address attester,
+        address user,
+        uint256 timestamp,
+        address sa,
+        bytes memory saPayload
+    ) public pure returns (bytes32) {
+        return
+            keccak256(
+                abi.encodePacked(attester, user, timestamp, sa, saPayload)
+            );
+    }
+
+    function encodePacked(
+        address attester,
+        address user,
+        uint256 timestamp,
+        address sa,
+        bytes memory saPayload
+    ) public pure returns (bytes memory) {
+        return abi.encodePacked(attester, user, timestamp, sa, saPayload);
+    }
+
+    function getEthSignedMessageHash(
+        bytes32 _messageHash
+    ) public pure returns (bytes32) {
+        // console.logBytes32(_messageHash);
+
+        return
+            keccak256(
+                abi.encodePacked(
+                    "\x19Ethereum Signed Message:\n32",
+                    _messageHash
+                )
+            );
     }
 }

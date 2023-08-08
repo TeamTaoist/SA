@@ -225,9 +225,9 @@
         "type": "bytes"
       },
       {
-        "internalType": "string",
+        "internalType": "uint256",
         "name": "timestamp",
-        "type": "string"
+        "type": "uint256"
       },
       {
         "internalType": "address",
@@ -254,17 +254,95 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "attester",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "sa",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "saPayload",
+        "type": "bytes"
+      }
+    ],
+    "name": "encodePacked",
+    "outputs": [
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "bytes32",
-        "name": "_bytes32",
+        "name": "_messageHash",
         "type": "bytes32"
       }
     ],
-    "name": "bytes32ToUintArray",
+    "name": "getEthSignedMessageHash",
     "outputs": [
       {
-        "internalType": "uint8[]",
+        "internalType": "bytes32",
         "name": "",
-        "type": "uint8[]"
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "attester",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "sa",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "saPayload",
+        "type": "bytes"
+      }
+    ],
+    "name": "getMessageHash",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
       }
     ],
     "stateMutability": "pure",

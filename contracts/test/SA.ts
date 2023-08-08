@@ -13,26 +13,26 @@ describe("SA", function () {
   async function deployFixture() {
 
     // Contracts are deployed using the first signer/account by default
-    const [owner, registryAttester, user] = await ethers.getSigners();
+    const [owner, attester, user] = await ethers.getSigners();
 
     const SARegistry = await ethers.getContractFactory("SARegistry");
     const saRegistry = await upgrades.deployProxy(SARegistry, []);
-    await saRegistry.registerAttester(registryAttester.address);
+    await saRegistry.registerAttester(attester.address);
 
     const SATwitter = await ethers.getContractFactory("SATwitter");
     const saTwitter = await SATwitter.deploy("SA-Twitter", "SAT");
 
     const SARegistryAddress = await saRegistry.getAddress();
-    
+
     await saTwitter.grantRole(ethers.keccak256(ethers.toUtf8Bytes("ATTESTER_ROLE")), SARegistryAddress);
-    
+
     const saTwitterAddress = await saTwitter.getAddress()
     await saRegistry.registerSA(saTwitterAddress);
 
-    return { saRegistry, saTwitter, owner, registryAttester, user };
+    return { saRegistry, saTwitter, owner, attester, user };
   }
 
-  describe.skip("SA Twitter", function () {
+  describe("SA Twitter", function () {
 
     it("should mint a token to the specified address if called by attester", async function () {
       const { saTwitter, owner, user } = await loadFixture(deployFixture);
@@ -66,93 +66,109 @@ describe("SA", function () {
       const data = abiCoder.encode(['uint256'], [12345]);
       await saTwitter.issue(user.address, data);
       const uri = await saTwitter.tokenURI(1);
-      expect(uri).to.contain("data:image/svg+xml;base64,");
+
+      // expect(uri).to.contain("data:image/svg+xml;base64,");
+      expect(uri).to.contain('<svg xmlns="http://www.w3.org/2000/svg"');
       expect(uri).to.contain("Twitter User ID: 12345");
     });
   });
 
   describe("SA Registry", function () {
     it("should allow registering and unregistering of SAs", async function () {
-        const { saRegistry, saTwitter } = await loadFixture(deployFixture);
-        
-        const saTwitterAddress = await saTwitter.getAddress()
-        const SA_REGISTRY = {
-          SA_ROLE: ethers.keccak256(ethers.toUtf8Bytes("SA_ROLE")),
-          ATTESTER_ROLE: ethers.keccak256(ethers.toUtf8Bytes("ATTESTER_ROLE"))
-        };
-      
-        // Registering an SA
-        await saRegistry.registerSA(saTwitterAddress);
-        expect(await saRegistry.hasRole(SA_REGISTRY.SA_ROLE, saTwitterAddress)).to.be.true;
-        
-        // Unregistering an SA
-        await saRegistry.unregisterSA(saTwitterAddress);
-        expect(await saRegistry.hasRole(SA_REGISTRY.SA_ROLE, saTwitterAddress)).to.be.false;
+      const { saRegistry, saTwitter } = await loadFixture(deployFixture);
+
+      const saTwitterAddress = await saTwitter.getAddress()
+      const SA_REGISTRY = {
+        SA_ROLE: ethers.keccak256(ethers.toUtf8Bytes("SA_ROLE")),
+        ATTESTER_ROLE: ethers.keccak256(ethers.toUtf8Bytes("ATTESTER_ROLE"))
+      };
+
+      // Registering an SA
+      await saRegistry.registerSA(saTwitterAddress);
+      expect(await saRegistry.hasRole(SA_REGISTRY.SA_ROLE, saTwitterAddress)).to.be.true;
+
+      // Unregistering an SA
+      await saRegistry.unregisterSA(saTwitterAddress);
+      expect(await saRegistry.hasRole(SA_REGISTRY.SA_ROLE, saTwitterAddress)).to.be.false;
     });
 
     it("should allow registering and unregistering of Attesters", async function () {
-        const { saRegistry, registryAttester } = await loadFixture(deployFixture);
+      const { saRegistry, attester } = await loadFixture(deployFixture);
 
-        const SA_REGISTRY = {
-          SA_ROLE: ethers.keccak256(ethers.toUtf8Bytes("SA_ROLE")),
-          ATTESTER_ROLE: ethers.keccak256(ethers.toUtf8Bytes("ATTESTER_ROLE"))
-        };
+      const SA_REGISTRY = {
+        SA_ROLE: ethers.keccak256(ethers.toUtf8Bytes("SA_ROLE")),
+        ATTESTER_ROLE: ethers.keccak256(ethers.toUtf8Bytes("ATTESTER_ROLE"))
+      };
 
-        // Registering an Attester
-        await saRegistry.registerAttester(registryAttester.address);
-        expect(await saRegistry.hasRole(SA_REGISTRY.ATTESTER_ROLE, registryAttester.address)).to.be.true;
+      // Registering an Attester
+      await saRegistry.registerAttester(attester.address);
+      expect(await saRegistry.hasRole(SA_REGISTRY.ATTESTER_ROLE, attester.address)).to.be.true;
 
-        // Unregistering an Attester
-        await saRegistry.unregisterAttester(registryAttester.address);
-        expect(await saRegistry.hasRole(SA_REGISTRY.ATTESTER_ROLE, registryAttester.address)).to.be.false;
+      // Unregistering an Attester
+      await saRegistry.unregisterAttester(attester.address);
+      expect(await saRegistry.hasRole(SA_REGISTRY.ATTESTER_ROLE, attester.address)).to.be.false;
     });
 
     it("should allow a valid attester to attest", async function () {
-        const { saRegistry, saTwitter, registryAttester, user } = await loadFixture(deployFixture);
+      const { saRegistry, saTwitter, attester, user } = await loadFixture(deployFixture);
 
-        const saTwitterAddress = await saTwitter.getAddress()
+      const saTwitterAddress = await saTwitter.getAddress()
 
-        const abiCoder = ethers.AbiCoder.defaultAbiCoder();
+      const abiCoder = ethers.AbiCoder.defaultAbiCoder();
 
-        const timestamp = time.latest().toString(); // Get current block timestamp
-        const saPayload = ethers.solidityPacked(["uint256"], [123456789]);
-        
-        // Construct the data to be signed
-        const dataToSign = ethers.keccak256(
-          ethers.solidityPacked(
-                ["address", "address", "string", "address", "bytes"],
-                [registryAttester.address, user.address, timestamp, saTwitterAddress, saPayload]
-          )
-        );
+      const timestamp = BigInt(await time.latest());// Get current block timestamp
+      const saPayload = ethers.solidityPacked(["uint256", "string"], [BigInt(123456789), "sdsadfsdasd"]);
 
-        // const message = ethers.getBytes(dataToSign)
-        // console.log(message)
+      // console.log(saPayload);
 
-        // Attester and user sign the data
-        const attesterSig = await registryAttester.signMessage(ethers.getBytes(dataToSign));
-        const userSig = await user.signMessage(ethers.getBytes(dataToSign));
+      // Construct the data to be signed
+      const dataToSign = ethers.keccak256(
+        ethers.solidityPacked(
+          ["address", "address", "uint256", "address", "bytes"],
+          [attester.address, user.address, timestamp, saTwitterAddress, saPayload]
+        )
+      );
 
-        // // Verify Attester's signature
-        // const recoveredAttesterAddress = ethers.verifyMessage(message, attesterSig);
-        // if (recoveredAttesterAddress.toLowerCase() === registryAttester.address.toLowerCase()) {
-        //     console.log("Attester's signature is valid!");
-        // } else {
-        //     console.log("Invalid signature from attester.");
-        // }
+      // console.log('ori dataToSign', dataToSign);
 
-        // // Verify User's signature
-        // const recoveredUserAddress = ethers.verifyMessage(message, userSig);
-        // if (recoveredUserAddress.toLowerCase() === user.address.toLowerCase()) {
-        //     console.log("User's signature is valid!");
-        // } else {
-        //     console.log("Invalid signature from user.");
-        // }
+      // const packed = await saRegistry.encodePacked(attester.address, user.address, timestamp, saTwitterAddress, saPayload);
+      // console.log('[SARegistry] packed dataToSign', packed);
 
-        // Execute the attest function
-        await saRegistry.attest(registryAttester.address, attesterSig, user.address, userSig, timestamp, saTwitterAddress, saPayload);
+      // const msgHash = await saRegistry.getMessageHash(attester.address, user.address, timestamp, saTwitterAddress, saPayload);
+      // console.log('[SARegistry] msgHash of dataToSign', msgHash);
 
-        // Confirm the user received the token
-        expect(await saTwitter.ownerOf(1)).to.equal(user.address);
+      // const ethMsgHash = await saRegistry.getEthSignedMessageHash(msgHash);
+      // console.log('[SARegistry] ethMsgHash of dataToSign', ethMsgHash);
+
+
+      const messageBytes = ethers.getBytes(dataToSign)
+
+      // Attester and user sign the data
+
+      const attesterSig = await attester.signMessage(messageBytes);
+      const userSig = await user.signMessage(messageBytes);
+
+      // Verify Attester's signature
+      const recoveredAttesterAddress = ethers.verifyMessage(messageBytes, attesterSig);
+      if (recoveredAttesterAddress.toLowerCase() === attester.address.toLowerCase()) {
+        console.log("Attester's signature is valid!");
+      } else {
+        console.log("Invalid signature from attester.");
+      }
+
+      // Verify User's signature
+      const recoveredUserAddress = ethers.verifyMessage(messageBytes, userSig);
+      if (recoveredUserAddress.toLowerCase() === user.address.toLowerCase()) {
+        console.log("User's signature is valid!");
+      } else {
+        console.log("Invalid signature from user.");
+      }
+
+      // Execute the attest function
+      await saRegistry.attest(attester.address, attesterSig, user.address, userSig, timestamp, saTwitterAddress, saPayload);
+
+      // Confirm the user received the token
+      expect(await saTwitter.ownerOf(1)).to.equal(user.address);
     });
   });
 });

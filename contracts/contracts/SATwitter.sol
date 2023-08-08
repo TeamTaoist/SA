@@ -61,10 +61,12 @@ contract SATwitter is
             )
         );
 
-        string memory base64Svg = _encode(svg);
+        // string memory base64Svg = _encode(svg);
 
-        return
-            string(abi.encodePacked("data:image/svg+xml;base64,", base64Svg));
+        // return
+        //     string(abi.encodePacked("data:image/svg+xml;base64,", base64Svg));
+
+        return svg;
     }
 
     function supportsInterface(
@@ -80,43 +82,43 @@ contract SATwitter is
     }
 
     // Helper function to encode SVG to base64
-    function _encode(
-        string memory _data
-    ) internal pure returns (string memory) {
-        bytes memory _dataBytes = bytes(_data);
-        return string(abi.encodePacked(_base64encode(_dataBytes)));
-    }
+    // function _encode(
+    //     string memory _data
+    // ) internal pure returns (string memory) {
+    //     bytes memory _dataBytes = bytes(_data);
+    //     return string(abi.encodePacked(_base64encode(_dataBytes)));
+    // }
 
-    function _base64encode(
-        bytes memory _data
-    ) internal pure returns (string memory) {
-        bytes memory encoded = new bytes(((_data.length + 2) / 3) * 4);
+    // function _base64encode(
+    //     bytes memory _data
+    // ) internal pure returns (string memory) {
+    //     bytes memory encoded = new bytes(((_data.length + 2) / 3) * 4);
 
-        uint256 i = 0;
-        uint256 j = 0;
-        while (i < _data.length) {
-            uint256 a = i < _data.length ? uint256(uint8(_data[i])) : 0;
-            uint256 b = i + 1 < _data.length ? uint256(uint8(_data[i + 1])) : 0;
-            uint256 c = i + 2 < _data.length ? uint256(uint8(_data[i + 2])) : 0;
+    //     uint256 i = 0;
+    //     uint256 j = 0;
+    //     while (i < _data.length) {
+    //         uint256 a = i < _data.length ? uint256(uint8(_data[i])) : 0;
+    //         uint256 b = i + 1 < _data.length ? uint256(uint8(_data[i + 1])) : 0;
+    //         uint256 c = i + 2 < _data.length ? uint256(uint8(_data[i + 2])) : 0;
 
-            uint256 triplet = (a << 0x10) + (b << 0x08) + c;
+    //         uint256 triplet = (a << 0x10) + (b << 0x08) + c;
 
-            encoded[j++] = bytes1(uint8(chars[(triplet >> (3 * 6)) & 0x3F]));
-            encoded[j++] = bytes1(uint8(chars[(triplet >> (2 * 6)) & 0x3F]));
-            encoded[j++] = bytes1(uint8(chars[(triplet >> (1 * 6)) & 0x3F]));
-            encoded[j++] = bytes1(uint8(chars[(triplet >> (0 * 6)) & 0x3F]));
+    //         encoded[j++] = bytes1(uint8(chars[(triplet >> (3 * 6)) & 0x3F]));
+    //         encoded[j++] = bytes1(uint8(chars[(triplet >> (2 * 6)) & 0x3F]));
+    //         encoded[j++] = bytes1(uint8(chars[(triplet >> (1 * 6)) & 0x3F]));
+    //         encoded[j++] = bytes1(uint8(chars[(triplet >> (0 * 6)) & 0x3F]));
 
-            i += 3;
-        }
+    //         i += 3;
+    //     }
 
-        // Add padding
-        if (_data.length % 3 == 1) {
-            encoded[j - 1] = "=";
-            encoded[j - 2] = "=";
-        } else if (_data.length % 3 == 2) {
-            encoded[j - 1] = "=";
-        }
+    //     // Add padding
+    //     if (_data.length % 3 == 1) {
+    //         encoded[j - 1] = "=";
+    //         encoded[j - 2] = "=";
+    //     } else if (_data.length % 3 == 2) {
+    //         encoded[j - 1] = "=";
+    //     }
 
-        return string(encoded);
-    }
+    //     return string(encoded);
+    // }
 }
