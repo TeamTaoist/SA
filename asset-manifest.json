@@ -1,0 +1,19 @@
+{
+  "files": {
+    "main.css": "/static/css/main.2438e252.css",
+    "main.js": "/static/js/main.0cd04f8e.js",
+    "static/js/787.97fb78fb.chunk.js": "/static/js/787.97fb78fb.chunk.js",
+    "static/media/SourceHanSansSC-Heavy.otf": "/static/media/SourceHanSansSC-Heavy.2b04fd2a91bfa9489496.otf",
+    "static/media/SourceHanSansSC-Normal.otf": "/static/media/SourceHanSansSC-Normal.395b3ac90c68e13b94b0.otf",
+    "static/media/logo.svg": "/static/media/logo.89f132e0403a1b1e86860dc3437cccc8.svg",
+    "static/media/img.svg": "/static/media/img.d7a1636980f106f424e92078f0abb9bc.svg",
+    "index.html": "/index.html",
+    "main.2438e252.css.map": "/static/css/main.2438e252.css.map",
+    "main.0cd04f8e.js.map": "/static/js/main.0cd04f8e.js.map",
+    "787.97fb78fb.chunk.js.map": "/static/js/787.97fb78fb.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.2438e252.css",
+    "static/js/main.0cd04f8e.js"
+  ]
+}
