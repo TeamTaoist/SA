@@ -64,20 +64,12 @@ export default function Steps() {
     <StepProvider>
       <StepsContainer>
         <Box sx={{ width: "100%" }}>
-          <Stepper activeStep={activeStep}>
+          <Stepper activeStep={activeStep} alternativeLabel>
             {steps.map((label, index) => {
               const stepProps: { completed?: boolean } = {};
               const labelProps: {
                 optional?: React.ReactNode;
               } = {};
-              if (isStepOptional(index)) {
-                labelProps.optional = (
-                  <Typography variant="caption">Optional</Typography>
-                );
-              }
-              if (isStepSkipped(index)) {
-                stepProps.completed = false;
-              }
               return (
                 <Step key={label} {...stepProps}>
                   <StepLabel {...labelProps}>{label}</StepLabel>
@@ -96,7 +88,7 @@ export default function Steps() {
               </Box>
             </React.Fragment>
           ) : (
-            <React.Fragment>{showCurrentStep()}</React.Fragment>
+            <div style={{marginTop: "40px"}}>{showCurrentStep()}</div>
           )}
         </Box>
       </StepsContainer>
@@ -104,4 +96,16 @@ export default function Steps() {
   );
 }
 
-const StepsContainer = styled.div``;
+const StepsContainer = styled.div`
+  border: 5px solid #69d5f3;
+  border-radius: 12px;
+  height: calc(100vh - 200px);
+  box-sizing: border-box;
+  background-color: rgba(255, 255, 255, 0.5);
+  width: 70%;
+  margin: 0 auto;
+  margin-top: 20px;
+  min-width: 800px;
+  padding: 40px 30px;
+  position: relative;
+`;

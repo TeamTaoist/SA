@@ -43,15 +43,19 @@ export default function VerifyStep({ handleBack, handleNext }: IProps) {
   };
   return (
     <VerifyStepStyle>
-      <Button variant="contained" color="primary" onClick={onClickVerify}>
-        Verify
-      </Button>
+      <MainButtonBox>
+        <Button variant="contained" color="primary" onClick={onClickVerify}>
+          Verify
+        </Button>
+      </MainButtonBox>
       <OptionBox sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-        <Button color="inherit" onClick={onClickBack} sx={{ mr: 1 }}>
+        <Button onClick={onClickBack} sx={{ mr: 1 }} variant="outlined">
           Back
         </Button>
         <Box sx={{ flex: "1 1 auto" }} />
-        <Button onClick={onClickNext}>Next</Button>
+        <Button onClick={onClickNext} variant="contained">
+          Next
+        </Button>
       </OptionBox>
     </VerifyStepStyle>
   );
@@ -60,7 +64,14 @@ export default function VerifyStep({ handleBack, handleNext }: IProps) {
 const VerifyStepStyle = styled.div``;
 
 const OptionBox = styled(Box)`
-  position: fixed;
-  right: 80px;
-  bottom: 60px;
+  position: absolute;
+  right: 40px;
+  bottom: 40px;
+`;
+const MainButtonBox = styled.div`
+  display: flex;
+  height: 300px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `;

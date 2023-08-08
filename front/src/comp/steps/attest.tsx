@@ -28,9 +28,11 @@ export default function AttestStep({ handleBack }: IProps) {
   };
   return (
     <AttestStepStyle>
-      <Button variant="contained" color="primary" onClick={onClickAttest}>
-        Attest
-      </Button>
+      <MainButtonBox>
+        <Button variant="contained" color="primary" onClick={onClickAttest}>
+          Attest
+        </Button>
+      </MainButtonBox>
       <OptionBox sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
         <Button color="inherit" onClick={onClickBack} sx={{ mr: 1 }}>
           Back
@@ -44,7 +46,15 @@ export default function AttestStep({ handleBack }: IProps) {
 const AttestStepStyle = styled.div``;
 
 const OptionBox = styled(Box)`
-  position: fixed;
-  right: 80px;
-  bottom: 60px;
+  position: absolute;
+  right: 40px;
+  bottom: 40px;
+`;
+
+const MainButtonBox = styled.div`
+  display: flex;
+  height: 300px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `;

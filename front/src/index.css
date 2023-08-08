@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color: #fff;
 }
 
 code {
@@ -13,5 +14,9 @@ code {
 }
 
 .App {
-  padding: 60px 80px;
+  padding: 0 80px;
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+  background: linear-gradient(to right, rgb(184,236,227),  #FDEAE3);
 }

@@ -28,35 +28,47 @@ export default function ConnectWalletStep({ handleBack, handleNext }: IProps) {
 
   return (
     <ConnectStepStyle>
-      {account ? (
-        <CardBox>
-          <Typography variant="h6" component="div">
-            {account}
-          </Typography>
-         
-        </CardBox>
-      ) : (
-        <Button variant="contained" color="primary" onClick={onClickConnect}>
-          Connect Wallet
-        </Button>
-      )}
+      <MainButtonBox>
+        {account ? (
+          <CardBox>
+            <Typography variant="body1" component="div">
+              Account: {account}
+            </Typography>
+          </CardBox>
+        ) : (
+          <Button variant="contained" color="primary" onClick={onClickConnect}>
+            Connect Wallet
+          </Button>
+        )}
+      </MainButtonBox>
 
       <OptionBox sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
         <Box sx={{ flex: "1 1 auto" }} />
-        <Button onClick={onClickNext}>Next</Button>
+        <Button onClick={onClickNext} variant="contained">
+          Next
+        </Button>
       </OptionBox>
     </ConnectStepStyle>
   );
 }
 
-const ConnectStepStyle = styled.div``;
+const ConnectStepStyle = styled.div`
+`;
 
 const OptionBox = styled(Box)`
-  position: fixed;
-  right: 80px;
-  bottom: 60px;
+  position: absolute;
+  right: 40px;
+  bottom: 40px;
 `;
 
 const CardBox = styled(Card)`
   padding: 20px;
+`;
+
+const MainButtonBox = styled.div`
+  display: flex;
+  height: 300px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `;
