@@ -1,8 +1,11 @@
 import styled from "@emotion/styled";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import { useWeb3React } from "@web3-react/core";
 import { oauthTwitter } from "../../api/oauth";
 import useSubcribe from "../useSubscribe";
+
+import { SA_TWITTER_CONTRACT } from "../../constants";
 
 
 import { TWITTER_APP_CLIENT_ID, TWITTER_REDIRECT_URL, LOCAL_OAUTH_KEY } from "../../constants";
@@ -18,6 +21,7 @@ interface IProps {
 }
 
 export default function TwitterLoginStep({ handleBack, handleNext }: IProps) {
+  const { account, provider } = useWeb3React();
   const { dispatch } = useStepContext();
 
   const onClickBack = () => {
@@ -40,11 +44,16 @@ export default function TwitterLoginStep({ handleBack, handleNext }: IProps) {
 
   const handleOauth = async (code: string, msgType: string) => {
     try {
-      // let resp;
-      // if (msgType === LOCAL_OAUTH_KEY.Twitter) {
-      //   resp = await oauthTwitter(code, TWITTER_REDIRECT_URL);
-      // }
-      dispatch({ type: StepActionType.SET_TWITTER_DATA, payload: { code } });
+      let resp;
+      if (msgType === LOCAL_OAUTH_KEY.Twitter) {
+
+        resp = await oauthTwitter(code, TWITTER_REDIRECT_URL, account!, SA_TWITTER_CONTRACT);
+
+        console.log(resp);
+
+        dispatch({ type: StepActionType.SET_TWITTER_DATA, payload: { code } });
+      }
+
 
       handleNext();
       // return resp?.data;
@@ -55,6 +64,7 @@ export default function TwitterLoginStep({ handleBack, handleNext }: IProps) {
 
   useSubcribe("SA_OAUTH_EVENT_TWITTER", async (_: any, { code, msgFrom, msgType }: { code: string; msgFrom: string; msgType: string }) => {
     console.log(`from ${msgFrom}`);
+    console.log(`code ${code}`);
     await handleOauth(code, msgType);
   });
 

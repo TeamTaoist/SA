@@ -39,7 +39,7 @@ export default function VerifyStep({ handleBack, handleNext }: IProps) {
     const signData = await provider.send("personal_sign", ["", account]);
 
 
-    await oauthTwitter(twitter_data.code, TWITTER_REDIRECT_URL, account!);
+    // await oauthTwitter(twitter_data.code, TWITTER_REDIRECT_URL, account!);
   };
   return (
     <VerifyStepStyle>

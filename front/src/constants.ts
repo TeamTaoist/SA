@@ -4,6 +4,9 @@ export const LOCALSTORAGE = {
     WALLET: "selected_wallet",
 };
 
+export const SA_REGISTRY_CONTRACT = "0x6c3F90f043a72FA612cbac8115EE7e52BDe6E490"; // SARegistry contract address
+export const SA_TWITTER_CONTRACT = "0x6c3F90f043a72FA612cbac8115EE7e52BDe6E490"; // SATwitter contract address
+
 export const TWITTER_APP_CLIENT_ID = "ZEhURHdBZWl3WHNlTmJsc2FWbnY6MTpjaQ"; // Need fetch from Twitter Developer Portal
 export const TWITTER_REDIRECT_URL = "http://localhost:3000/oauth/twitter";
 
@@ -29,3 +32,5 @@ export const LOCAL_OAUTH_KEY = {
 };
 
 export const SELECT_WALLET = "Wallet";
+
+
