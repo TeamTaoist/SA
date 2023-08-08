@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -18,17 +27,41 @@ const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use(express_1.default.json());
-function signMessage(msg) {
-    const signingKey = new ethers_1.ethers.SigningKey(ETH_PRIV_KEY);
-    const address = ethers_1.ethers.computeAddress(signingKey.publicKey);
-    const timestamp = Math.floor(new Date().getTime() / 1000);
-    console.log(msg);
-    const data = Object.assign({ signer: address, ts: timestamp }, msg);
-    console.log('data', data);
-    const signature = signingKey.sign(ethers_1.ethers.keccak256(ethers_1.ethers.toUtf8Bytes(JSON.stringify(data))));
-    console.log('signature', signature.serialized);
-    return Object.assign(Object.assign({ sig: signature.serialized }, data));
+function signAttestMessage(receiver, twitterId, twitterName) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const provider = ethers_1.ethers.getDefaultProvider("homestead");
+        const wallet = new ethers_1.ethers.Wallet(ETH_PRIV_KEY, provider);
+        const address = wallet.address;
+        const timestamp = Math.floor(new Date().getTime() / 1000);
+        const payload = twitterId;
+        const data = {
+            attester: address,
+            receiver: receiver,
+            timestamp: timestamp,
+            payload: payload
+        };
+        const abiCoder = ethers_1.ethers.AbiCoder.defaultAbiCoder();
+        const packedData = abiCoder.encode(["address", "address", "uint256", "string"], [address, receiver, timestamp, twitterName]);
+        const signature = yield wallet.signMessage(packedData);
+        // const returnData = Object.assign({ attesterSig: signature, ...data })
+        return Object.assign(Object.assign({ attesterSig: signature }, data));
+        // return signature;
+    });
 }
+// function signAttestMessage(attester: string, receiver: string, saContract: string, timestamp: string, msg: string,): string {
+//     const signingKey = new ethers.SigningKey(ETH_PRIV_KEY);
+//     const address = ethers.computeAddress(signingKey.publicKey);
+//     console.log(msg);
+//     const data = {
+//         signer: address,
+//         ts: timestamp,
+//         ...msg
+//     }
+//     console.log('data', data);
+//     const signature = signingKey.sign(ethers.keccak256(ethers.toUtf8Bytes(JSON.stringify(data))));
+//     console.log('signature', signature.serialized);
+//     return Object.assign({ sig: signature.serialized, ...data });
+// }
 app.get("/api/twitter/get_id/:userName", function (req, res) {
     var params = req.params;
     console.debug("=====", params.userName);
@@ -50,7 +83,9 @@ app.post("/oauth/twitter", function (req, res) {
     console.debug("=====", params);
     var body = req.body;
     console.debug("======body", body);
-    // todo: add ethereum wallet signature from client
+    var code = req.body.code;
+    var redirect_uri = req.body.redirect_uri;
+    var receiver = req.body.receiver;
     var formdata = {
         "client_id": ClientID,
         "client_secret": ClientSecret,
@@ -80,12 +115,12 @@ app.post("/oauth/twitter", function (req, res) {
                 "Accept": "application/json",
                 "Authorization": "Bearer " + dataResult.data.access_token
             }
-        }).then((dataResult) => {
+        }).then((dataResult) => __awaiter(this, void 0, void 0, function* () {
             console.log(dataResult.data);
-            var result = JSON.stringify(signMessage(dataResult.data));
+            var result = yield signAttestMessage(receiver, dataResult.data.data.id, dataResult.data.data.username);
             console.log(result);
-            res.send(result);
-        });
+            res.send(JSON.stringify(result));
+        }));
     }).catch((error) => {
         // console.debug(error);
         // console.debug(error.message);
