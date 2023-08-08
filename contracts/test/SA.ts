@@ -60,6 +60,15 @@ describe("SA", function () {
       await expect(saTwitter.connect(user).issue(user.address, data)).to.be.reverted;
     });
 
+    it("tokenURI should return valid URI for the minted token", async function () {
+      const { saTwitter, user } = await loadFixture(deployFixture);
+      const abiCoder = ethers.AbiCoder.defaultAbiCoder();
+      const data = abiCoder.encode(['uint256'], [12345]);
+      await saTwitter.issue(user.address, data);
+      const uri = await saTwitter.tokenURI(1);
+      expect(uri).to.contain("data:image/svg+xml;base64,");
+      expect(uri).to.contain("Twitter User ID: 12345");
+    });
   });
 
   describe("SA Registry", function () {
@@ -116,28 +125,28 @@ describe("SA", function () {
           )
         );
 
-        const message = ethers.getBytes(dataToSign)
-        console.log(message)
+        // const message = ethers.getBytes(dataToSign)
+        // console.log(message)
 
         // Attester and user sign the data
         const attesterSig = await registryAttester.signMessage(ethers.getBytes(dataToSign));
         const userSig = await user.signMessage(ethers.getBytes(dataToSign));
 
-        // Verify Attester's signature
-        const recoveredAttesterAddress = ethers.verifyMessage(message, attesterSig);
-        if (recoveredAttesterAddress.toLowerCase() === registryAttester.address.toLowerCase()) {
-            console.log("Attester's signature is valid!");
-        } else {
-            console.log("Invalid signature from attester.");
-        }
+        // // Verify Attester's signature
+        // const recoveredAttesterAddress = ethers.verifyMessage(message, attesterSig);
+        // if (recoveredAttesterAddress.toLowerCase() === registryAttester.address.toLowerCase()) {
+        //     console.log("Attester's signature is valid!");
+        // } else {
+        //     console.log("Invalid signature from attester.");
+        // }
 
-        // Verify User's signature
-        const recoveredUserAddress = ethers.verifyMessage(message, userSig);
-        if (recoveredUserAddress.toLowerCase() === user.address.toLowerCase()) {
-            console.log("User's signature is valid!");
-        } else {
-            console.log("Invalid signature from user.");
-        }
+        // // Verify User's signature
+        // const recoveredUserAddress = ethers.verifyMessage(message, userSig);
+        // if (recoveredUserAddress.toLowerCase() === user.address.toLowerCase()) {
+        //     console.log("User's signature is valid!");
+        // } else {
+        //     console.log("Invalid signature from user.");
+        // }
 
         // Execute the attest function
         await saRegistry.attest(registryAttester.address, attesterSig, user.address, userSig, timestamp, saTwitterAddress, saPayload);

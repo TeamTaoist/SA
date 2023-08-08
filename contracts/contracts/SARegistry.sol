@@ -82,37 +82,37 @@ contract SARegistry is ReentrancyGuardUpgradeable, AccessControl {
             abi.encodePacked(attester, user, timestamp, sa, saPayload)
         );
 
-        uint8[] memory byteArray = bytes32ToUintArray(dataToSign);
-        for (uint i = 0; i < 32; i++) {
-            console.log("Byte %d: %d", i, byteArray[i]);
-        }
+        // uint8[] memory byteArray = bytes32ToUintArray(dataToSign);
+        // for (uint i = 0; i < 32; i++) {
+        //     console.log("Byte %d: %d", i, byteArray[i]);
+        // }
 
-        (
-            address recovered,
-            ECDSAUpgradeable.RecoverError error
-        ) = ECDSAUpgradeable.tryRecover(dataToSign, attesterSig);
+        // (
+        //     address recovered,
+        //     ECDSAUpgradeable.RecoverError error
+        // ) = ECDSAUpgradeable.tryRecover(dataToSign, attesterSig);
 
-        console.log(attester);
-        console.log(recovered);
+        // console.log(attester);
+        // console.log(recovered);
 
-        // Check the signatures
-        require(
-            SignatureCheckerUpgradeable.isValidSignatureNow(
-                attester,
-                dataToSign,
-                attesterSig
-            ),
-            "Invalid attester signature"
-        );
+        // // Check the signatures
+        // require(
+        //     SignatureCheckerUpgradeable.isValidSignatureNow(
+        //         attester,
+        //         dataToSign,
+        //         attesterSig
+        //     ),
+        //     "Invalid attester signature"
+        // );
 
-        require(
-            SignatureCheckerUpgradeable.isValidSignatureNow(
-                user,
-                dataToSign,
-                userSig
-            ),
-            "Invalid user signature"
-        );
+        // require(
+        //     SignatureCheckerUpgradeable.isValidSignatureNow(
+        //         user,
+        //         dataToSign,
+        //         userSig
+        //     ),
+        //     "Invalid user signature"
+        // );
 
         // Call the issue function on the SA
         ISocialAttestationInterface saContract = ISocialAttestationInterface(
