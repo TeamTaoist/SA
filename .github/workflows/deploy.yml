@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./web
+        working-directory: ./front
       
     steps:
      - name: Checkout
@@ -20,7 +20,7 @@ jobs:
      - name: Setup Node
        uses: actions/setup-node@v2
        with:
-         node-version: '16.17.0'
+         node-version: '18.12.1'
 
      - name: Insall dependencies
        run: npm install
@@ -32,7 +32,7 @@ jobs:
        uses: crazy-max/ghaction-github-pages@v3
        with:
           target_branch: gh-pages
-          build_dir: ./web/build
+          build_dir: ./front/build
           fqdn: sa.0xd.app
        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
