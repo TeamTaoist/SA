@@ -3,6 +3,8 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
@@ -10,7 +12,11 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 
 import "./ISA.sol";
 
-contract SATwitter is ISocialAttestationInterface, ERC721, AccessControl {
+contract SATwitter is
+    ISocialAttestationInterface,
+    AccessControl,
+    ERC721Enumerable
+{
     using Counters for Counters.Counter;
 
     bytes32 public constant ATTESTER_ROLE = keccak256("ATTESTER_ROLE");
@@ -23,24 +29,13 @@ contract SATwitter is ISocialAttestationInterface, ERC721, AccessControl {
         _setupRole(ATTESTER_ROLE, msg.sender);
     }
 
-    // fixme: need handle re-issue token case!
     function issue(
         address to,
         bytes memory data
     ) external override onlyRole(ATTESTER_ROLE) returns (uint256) {
-        return _issueSA(to, data);
-    }
-
-    // fixme: need handle re-issue token case!
-    function _issueSA(
-        address to,
-        bytes memory data
-    ) internal returns (uint256) {
-        (bytes32 sig, uint256 twitterUserId, uint256 timestamp) = abi.decode(
-            data,
-            (bytes32, uint256, uint256)
-        );
-        super._safeMint(to, twitterUserId);
+        uint256 twitterUserId = abi.decode(data, (uint256));
+        uint256 tokenId = totalSupply() + 1;
+        super._safeMint(to, tokenId);
         return twitterUserId;
     }
 
@@ -50,7 +45,7 @@ contract SATwitter is ISocialAttestationInterface, ERC721, AccessControl {
         public
         view
         virtual
-        override(AccessControl, ERC721, IERC165)
+        override(AccessControl, ERC721Enumerable, IERC165)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
