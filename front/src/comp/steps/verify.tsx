@@ -20,9 +20,8 @@ export default function VerifyStep({ handleBack }: IProps) {
     if (!provider) {
       return;
     }
-    console.log("twitter_data:", twitter_data);
     // sign msg
-    // const signData = await provider.send("personal_sign", ["", account]);
+    const signData = await provider.send("personal_sign", ["", account]);
   };
   return (
     <VerifyStepStyle>
