@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { ethers } from 'ethers';
 
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
@@ -7,13 +8,18 @@ import { useStepContext } from "../../providers/stepProvider";
 import FinishedModal from "../modal";
 import { useState } from "react";
 
+import SARegistryABI from "../../abi/SARegistry.json";
+import SATwitterABI from "../../abi/SATwitter.json";
+
+import { SA_REGISTRY_CONTRACT } from "../../constants";
+
 interface IProps {
   handleBack: () => void;
 }
 
 export default function AttestStep({ handleBack }: IProps) {
   const { account, provider } = useWeb3React();
-  const { state: { twitter_data } } = useStepContext();
+  const { state: { twitter_data, sign_data } } = useStepContext();
   const [showModal, setShowModal] = useState(false);
 
   const onClickBack = () => {
@@ -25,10 +31,26 @@ export default function AttestStep({ handleBack }: IProps) {
       return;
     }
 
-    console.log(twitter_data);
+    console.log('twitter_data', twitter_data);
+
+    const userSig = sign_data;
+
+    const { attester, attesterSig, receiver, timestamp, saContract } = twitter_data;
+    const { twitterId, twitterName, twitterUserName } = twitter_data.payload;
+
+    const saPayload = ethers.solidityPacked(["string", "string", "string"], [twitterId, twitterName, twitterUserName]);
+    const packedData = ethers.keccak256(ethers.solidityPacked(["address", "address", "uint256", "address", "bytes"], [attester, receiver, BigInt(timestamp), saContract, saPayload]));
+
+    
+
+    const saRegistryContract = new ethers.Contract(SA_REGISTRY_CONTRACT, SARegistryABI);
+    console.log("saRegistryContract===", saRegistryContract);
+
+
+    const rt = await saRegistryContract.attest(attester, attesterSig, receiver, userSig, timestamp, saContract, saPayload);
+    console.log("rt===", rt);
     
     // sign msg
-    const signData = await provider.send("personal_sign", ["", account]);
   };
   return (
     <AttestStepStyle>

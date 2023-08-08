@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { useWeb3React } from "@web3-react/core";
-import { useStepContext } from "../../providers/stepProvider";
+import { StepActionType, useStepContext } from "../../providers/stepProvider";
 
 import { oauthTwitter } from "../../api/oauth";
 import useSubcribe from "../useSubscribe";
@@ -18,6 +18,7 @@ interface IProps {
 export default function VerifyStep({ handleBack, handleNext }: IProps) {
   const { account, provider } = useWeb3React();
   const { state: { twitter_data } } = useStepContext();
+  const { dispatch } = useStepContext();
   const onClickBack = () => {
     // do sth before go to back step if you want
     handleBack();
@@ -44,12 +45,11 @@ export default function VerifyStep({ handleBack, handleNext }: IProps) {
     // sign msg
     const signData = await provider.send("personal_sign", [packedData, account]);
 
-
-    
-
     console.log('signData', signData);
 
-    // await oauthTwitter(twitter_data.code, TWITTER_REDIRECT_URL, account!);
+    dispatch({ type: StepActionType.SET_SIGN_DATA, payload: signData });
+
+    handleNext();
   };
   return (
     <VerifyStepStyle>
