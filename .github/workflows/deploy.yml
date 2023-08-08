@@ -1,0 +1,38 @@
+name: Deploy to github page
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./web
+      
+    steps:
+     - name: Checkout
+       uses: actions/checkout@v3
+
+     - name: Setup Node
+       uses: actions/setup-node@v2
+       with:
+         node-version: '16.17.0'
+
+     - name: Insall dependencies
+       run: npm install
+     - name: Compile 
+       run: npm run build
+    
+     - name: Deploy to GitHub Pages
+       if: success()
+       uses: crazy-max/ghaction-github-pages@v3
+       with:
+          target_branch: gh-pages
+          build_dir: ./web/build
+          fqdn: sa.0xd.app
+       env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
