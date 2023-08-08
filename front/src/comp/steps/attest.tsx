@@ -4,6 +4,8 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { useWeb3React } from "@web3-react/core";
 import { useStepContext } from "../../providers/stepProvider";
+import FinishedModal from "../modal";
+import { useState } from "react";
 
 interface IProps {
   handleBack: () => void;
@@ -12,6 +14,8 @@ interface IProps {
 export default function AttestStep({ handleBack }: IProps) {
   const { account, provider } = useWeb3React();
   const { state: { twitter_data } } = useStepContext();
+  const [showModal, setShowModal] = useState(false);
+
   const onClickBack = () => {
     // do sth before go to back step if you want
     handleBack();
@@ -34,11 +38,21 @@ export default function AttestStep({ handleBack }: IProps) {
         </Button>
       </MainButtonBox>
       <OptionBox sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-        <Button color="inherit" onClick={onClickBack} sx={{ mr: 1 }}>
+        <Button
+          onClick={onClickBack}
+          sx={{ mr: 1 }}
+          variant="outlined"
+        >
           Back
         </Button>
         <Box sx={{ flex: "1 1 auto" }} />
       </OptionBox>
+      {showModal && (
+        <FinishedModal
+          show={showModal}
+          handleClose={() => setShowModal(false)}
+        />
+      )}
     </AttestStepStyle>
   );
 }
