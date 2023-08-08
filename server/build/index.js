@@ -33,7 +33,11 @@ function signAttestMessage(saContract, receiver, twitterId, twitterName, twitter
         const wallet = new ethers_1.ethers.Wallet(ETH_PRIV_KEY, provider);
         const address = wallet.address;
         const timestamp = Math.floor(new Date().getTime() / 1000);
-        const payload = twitterId;
+        const payload = {
+            twitterId: twitterId,
+            twitterName: twitterName,
+            twitterUserName: twitterUserName
+        };
         const data = {
             attester: address,
             receiver: receiver,
@@ -41,10 +45,10 @@ function signAttestMessage(saContract, receiver, twitterId, twitterName, twitter
             saContract: saContract,
             payload: payload
         };
-        const abiCoder = ethers_1.ethers.AbiCoder.defaultAbiCoder();
+        // const abiCoder = ethers.AbiCoder.defaultAbiCoder();
         const saPayload = ethers_1.ethers.solidityPacked(["string", "string", "string"], [twitterId, twitterName, twitterUserName]);
-        const packedData = abiCoder.encode(["address", "address", "uint256", "string", "string"], [address, receiver, BigInt(timestamp), saContract, saPayload]);
-        const signature = yield wallet.signMessage(packedData);
+        const packedData = ethers_1.ethers.keccak256(ethers_1.ethers.solidityPacked(["address", "address", "uint256", "address", "bytes"], [address, receiver, BigInt(timestamp), saContract, saPayload]));
+        const signature = yield wallet.signMessage(ethers_1.ethers.getBytes(packedData));
         return Object.assign(Object.assign({ attesterSig: signature }, data));
     });
 }

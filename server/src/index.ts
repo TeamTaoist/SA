@@ -27,7 +27,11 @@ async function signAttestMessage(saContract: string, receiver: string, twitterId
 
     const timestamp = Math.floor(new Date().getTime() / 1000);
 
-    const payload = twitterId;
+    const payload = {
+        twitterId: twitterId,
+        twitterName: twitterName,
+        twitterUserName: twitterUserName
+    }
 
     const data = {
         attester: address,
