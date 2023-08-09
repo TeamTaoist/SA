@@ -35,13 +35,7 @@ export default function AttestStep({ handleBack }: IProps) {
 
     const userSig = sign_data;
 
-    const { attester, attesterSig, receiver, timestamp, saContract } = twitter_data;
-    const { twitterId, twitterName, twitterUserName } = twitter_data.payload;
-
-    const saPayload = ethers.solidityPacked(["string", "string", "string"], [twitterId, twitterName, twitterUserName]);
-    const packedData = ethers.keccak256(ethers.solidityPacked(["address", "address", "uint256", "address", "bytes"], [attester, receiver, BigInt(timestamp), saContract, saPayload]));
-
-    
+    const { attester, attesterSig, receiver, timestamp, saContract, saPayload } = twitter_data;    
 
     const saRegistryContract = new ethers.Contract(SA_REGISTRY_CONTRACT, SARegistryABI);
     console.log("saRegistryContract===", saRegistryContract);

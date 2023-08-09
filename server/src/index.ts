@@ -33,18 +33,19 @@ async function signAttestMessage(saContract: string, receiver: string, twitterId
         twitterUserName: twitterUserName
     }
 
+    const abiCoder = ethers.AbiCoder.defaultAbiCoder();
+    const saPayload = abiCoder.encode(["string", "string", "string"], [twitterId, twitterName, twitterUserName]);
+    const packedData = ethers.keccak256(ethers.solidityPacked(["address", "address", "uint256", "address", "bytes"], [address, receiver, BigInt(timestamp), saContract, saPayload]));
+    const signature = await wallet.signMessage(ethers.getBytes(packedData));
+
     const data = {
         attester: address,
         receiver: receiver,
         timestamp: timestamp,
         saContract: saContract,
-        payload: payload
+        payload: payload,
+        saPayload: saPayload,
     };
-
-    const abiCoder = ethers.AbiCoder.defaultAbiCoder();
-    const saPayload = abiCoder.encode(["string", "string", "string"], [twitterId, twitterName, twitterUserName]);
-    const packedData = ethers.keccak256(ethers.solidityPacked(["address", "address", "uint256", "address", "bytes"], [address, receiver, BigInt(timestamp), saContract, saPayload]));
-    const signature = await wallet.signMessage(ethers.getBytes(packedData));
 
     return Object.assign({ attesterSig: signature, ...data });
 }
