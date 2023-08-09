@@ -36,14 +36,22 @@ export default function AttestStep({ handleBack }: IProps) {
     const userSig = sign_data;
 
     const { attester, attesterSig, receiver, timestamp, saContract, saPayload } = twitter_data;    
+    // const { attester, attesterSig, receiver, timestamp, saContract } = twitter_data;
+    // const { twitterId, twitterName, twitterUserName } = twitter_data.payload;
 
-    const saRegistryContract = new ethers.Contract(SA_REGISTRY_CONTRACT, SARegistryABI);
+    // const saPayload = ethers.utils.solidityPack(["string", "string", "string"], [twitterId, twitterName, twitterUserName]);
+    const abiCoder = ethers.utils.defaultAbiCoder;
+    const packedData = ethers.utils.keccak256(abiCoder.encode(["address", "address", "uint256", "address", "bytes"], [attester, receiver, BigInt(timestamp), saContract, saPayload]));
+
+    let signer = provider.getSigner();
+
+    const saRegistryContract = new ethers.Contract(SA_REGISTRY_CONTRACT, SARegistryABI, signer);
     console.log("saRegistryContract===", saRegistryContract);
 
 
     const rt = await saRegistryContract.attest(attester, attesterSig, receiver, userSig, timestamp, saContract, saPayload);
     console.log("rt===", rt);
-    
+
     // sign msg
   };
   return (
