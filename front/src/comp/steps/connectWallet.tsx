@@ -6,6 +6,14 @@ import { injected as connector } from "../../wallet/connector";
 import { useWeb3React } from "@web3-react/core";
 import { Card } from "@mui/material";
 
+import FinishedModal from "../modal";
+import { useState } from "react";
+
+import SARegistryABI from "../../abi/SARegistry.json";
+import SATwitterABI from "../../abi/SATwitter.json";
+
+import { SA_REGISTRY_CONTRACT } from "../../constants";
+
 interface IProps {
   handleBack?: () => void;
   handleNext: () => void;
@@ -13,6 +21,8 @@ interface IProps {
 
 export default function ConnectWalletStep({ handleBack, handleNext }: IProps) {
   const { account } = useWeb3React();
+  const [showModal, setShowModal] = useState(false);
+
   const onClickNext = () => {
     // do sth before go to next step if you want
     handleNext();
@@ -21,6 +31,8 @@ export default function ConnectWalletStep({ handleBack, handleNext }: IProps) {
   const onClickConnect = async () => {
     try {
       await connector.activate();
+      // setShowModal(true);
+
     } catch (error) {
       console.error("connect failed", error);
     }
@@ -48,6 +60,14 @@ export default function ConnectWalletStep({ handleBack, handleNext }: IProps) {
           Next
         </Button>
       </OptionBox>
+
+      {showModal && (
+        <FinishedModal
+          show={showModal}
+          handleClose={() => setShowModal(false)}
+        />
+      )}
+
     </ConnectStepStyle>
   );
 }

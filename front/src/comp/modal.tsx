@@ -3,12 +3,22 @@ import { Modal } from "@mui/material";
 import LogoIcon from "../assets/logo.svg";
 import DoneIcon from "../assets/images/done.svg";
 
+import { useWeb3React } from "@web3-react/core";
+
+import SARegistryABI from "../abi/SARegistry.json";
+import SATwitterABI from "../abi/SATwitter.json";
+
+import { SA_REGISTRY_CONTRACT } from "../constants";
+
 interface IProps {
   show: boolean;
   handleClose: () => void;
 }
 
 export default function FinishedModal({ show, handleClose }: IProps) {
+
+  const { account, provider } = useWeb3React();
+
   return (
     <Modal open={show} onClose={handleClose}>
       <ModalContainer>

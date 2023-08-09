@@ -15,9 +15,10 @@ import { SA_REGISTRY_CONTRACT } from "../../constants";
 
 interface IProps {
   handleBack: () => void;
+  handleNext: () => void;
 }
 
-export default function AttestStep({ handleBack }: IProps) {
+export default function AttestStep({ handleBack, handleNext }: IProps) {
   const { account, provider } = useWeb3React();
   const { state: { twitter_data, sign_data } } = useStepContext();
   const [showModal, setShowModal] = useState(false);
@@ -35,7 +36,7 @@ export default function AttestStep({ handleBack }: IProps) {
 
     const userSig = sign_data;
 
-    const { attester, attesterSig, receiver, timestamp, saContract, saPayload } = twitter_data;    
+    const { attester, attesterSig, receiver, timestamp, saContract, saPayload } = twitter_data;
     // const { attester, attesterSig, receiver, timestamp, saContract } = twitter_data;
     // const { twitterId, twitterName, twitterUserName } = twitter_data.payload;
 
@@ -52,7 +53,7 @@ export default function AttestStep({ handleBack }: IProps) {
     const rt = await saRegistryContract.attest(attester, attesterSig, receiver, userSig, timestamp, saContract, saPayload);
     console.log("rt===", rt);
 
-    // sign msg
+    handleNext();
   };
   return (
     <AttestStepStyle>

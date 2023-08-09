@@ -52,7 +52,7 @@ export default function Steps() {
       case 2:
         return <VerifyStep handleBack={handleBack} handleNext={handleNext} />;
       case 3:
-        return <AttestStep handleBack={handleBack} />;
+        return <AttestStep handleBack={handleBack} handleNext={handleNext}/>;
       default:
         return <ConnectWalletStep handleNext={handleNext} />;
     }
