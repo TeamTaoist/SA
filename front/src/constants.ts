@@ -4,8 +4,8 @@ export const LOCALSTORAGE = {
     WALLET: "selected_wallet",
 };
 
-export const SA_REGISTRY_CONTRACT = "0xe849e51a1bb4e28De675843aFD9ECbEf082cEFC6"; // SARegistry contract address
-export const SA_TWITTER_CONTRACT = "0x36511968A4a1Df2319F44396dD0fe815bc1bF5f9"; // SATwitter contract address
+export const SA_REGISTRY_CONTRACT = "0xf3C630A176d25f2c415577019e542187e07b7204"; // SARegistry contract address
+export const SA_TWITTER_CONTRACT = "0x78F8ef23c2CA4c39683805555dA67595DCA0b1Fa"; // SATwitter contract address
 
 export const TWITTER_APP_CLIENT_ID = "ZEhURHdBZWl3WHNlTmJsc2FWbnY6MTpjaQ"; // Need fetch from Twitter Developer Portal
 export const TWITTER_REDIRECT_URL = "http://localhost:3000/oauth/twitter";

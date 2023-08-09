@@ -43,7 +43,7 @@ export default function VerifyStep({ handleBack, handleNext }: IProps) {
     // const saPayload = ethers.utils.solidityPack(["string", "string", "string"], [twitterId, twitterName, twitterUserName]);
 
     const abiCoder = ethers.utils.defaultAbiCoder;
-    const packedData = ethers.utils.keccak256(abiCoder.encode(["address", "address", "uint256", "address", "bytes"], [attester, receiver, BigInt(timestamp), saContract, saPayload]));
+    const packedData = ethers.utils.keccak256(ethers.utils.solidityPack(["address", "address", "uint256", "address", "bytes"], [attester, receiver, BigInt(timestamp), saContract, saPayload]));
 
     // sign msg
     const signData = await provider.send("personal_sign", [packedData, account]);
