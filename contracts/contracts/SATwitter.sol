@@ -79,7 +79,8 @@ contract SATwitter is
             )
         );
 
-        return string(abi.encodePacked("data:image/svg+xml;utf8,", svg));
+        // return string(abi.encodePacked("data:image/svg+xml;utf8,", svg));
+        return svg;
     }
 
     function supportsInterface(
